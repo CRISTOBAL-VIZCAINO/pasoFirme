@@ -1,0 +1,151 @@
+.model {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border-radius: var(--radius);
+    background: var(--teal-50);
+    border: 1px solid var(--teal-100);
+  }
+}
+
+.model-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  color: var(--teal-700);
+}
+
+.dossier {
+  margin: 0;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-lg);
+}
+
+.dossier-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--line);
+
+  .icon-badge {
+    margin: 0;
+    width: 44px;
+    height: 44px;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 150px;
+    line-height: 1.3;
+  }
+
+  .badge {
+    margin-left: auto;
+  }
+}
+
+.dossier-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3) var(--space-4);
+  margin: var(--space-4) 0;
+
+  dt {
+    font-size: var(--fs-xs);
+    color: var(--ink-500);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 700;
+    color: var(--navy-900);
+  }
+}
+
+.registro {
+  display: grid;
+  grid-template-columns: repeat(30, 1fr);
+  gap: 3px;
+  margin-bottom: var(--space-4);
+
+  i {
+    height: 22px;
+    border-radius: 3px;
+    background: var(--teal-500);
+  }
+
+  .off {
+    background: var(--sand-200);
+  }
+}
+
+.dossier-checks {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-sm);
+
+  li {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    margin-bottom: var(--space-1);
+  }
+
+  app-icon {
+    color: var(--teal-600);
+  }
+}
+
+.eco-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-4);
+
+  li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .icon-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    margin: 0;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.form-card {
+  color: var(--ink-900);
+
+  h3 {
+    color: var(--navy-900);
+  }
+}
+
+.submit {
+  margin-top: var(--space-5);
+  width: 100%;
+}

@@ -1,0 +1,58 @@
+<header class="bar">
+  <div class="container inner">
+    <a routerLink="/" class="brand" aria-label="Paso Firme, ir al inicio">
+      <app-logo />
+    </a>
+
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <ul>
+        @for (item of nav; track item.path) {
+          <li>
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="is-active"
+              ariaCurrentWhenActive="page"
+              [routerLinkActiveOptions]="{ exact: !!item.exact }"
+              >{{ item.label }}</a
+            >
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <a routerLink="/inscripcion" class="btn btn--primary btn--sm cta">Inscríbete</a>
+      <button
+        type="button"
+        class="menu-toggle"
+        (click)="toggle()"
+        [attr.aria-expanded]="open()"
+        aria-controls="mobile-menu"
+      >
+        <app-icon [name]="open() ? 'x' : 'menu'" [size]="26" />
+        <span class="visually-hidden">{{ open() ? 'Cerrar menú' : 'Abrir menú' }}</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div id="mobile-menu" class="mobile-menu" [class.is-open]="open()" [attr.inert]="open() ? null : ''">
+  <nav aria-label="Navegación móvil">
+    <ul>
+      @for (item of nav; track item.path) {
+        <li>
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="is-active"
+            ariaCurrentWhenActive="page"
+            [routerLinkActiveOptions]="{ exact: !!item.exact }"
+          >
+            {{ item.label }}
+            <app-icon name="chevron-right" [size]="20" />
+          </a>
+        </li>
+      }
+    </ul>
+    <a routerLink="/inscripcion" class="btn btn--primary">Inscribe tu negocio</a>
+  </nav>
+</div>

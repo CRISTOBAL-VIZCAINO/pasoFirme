@@ -1,0 +1,153 @@
+<app-page-hero
+  eyebrow="Herramienta · Simulación tributaria"
+  title="Simulador tributario pedagógico"
+  lead="Primero entiendes, luego decides. Simula de forma anónima qué significarían el Régimen Simple (RST) y el ICA para tu negocio."
+  [breadcrumbs]="[{ label: 'Herramientas', path: '/herramientas' }, { label: 'Simulador tributario' }]"
+/>
+
+<section class="section">
+  <div class="container">
+    <div class="note anon">
+      <app-icon name="lock" [size]="20" />
+      <p>
+        <strong>Simulación 100% anónima.</strong> No te pedimos nombre, cédula ni RUT, y nada de lo que escribas sale de tu celular. Paso Firme
+        no es la DIAN ni la Alcaldía.
+      </p>
+    </div>
+  </div>
+
+  <div class="container tool-layout">
+    <form class="tool-form" [formGroup]="form" (submit)="$event.preventDefault()">
+      <h2>Tu negocio</h2>
+
+      <div class="field">
+        <label class="label" for="actividad">¿A qué se dedica tu negocio?</label>
+        <select id="actividad" class="select" formControlName="actividad">
+          @for (a of actividades; track a.id) {
+            <option [value]="a.id">{{ a.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="label" for="ventasMes">¿Cuánto vendes al mes, aproximadamente?</label>
+        <div class="input-prefix">
+          <span aria-hidden="true">$</span>
+          <input id="ventasMes" class="input" type="number" inputmode="numeric" min="0" step="100000" formControlName="ventasMensuales" />
+        </div>
+        <p class="hint">Son las ventas totales (ingresos brutos), antes de descontar gastos.</p>
+      </div>
+
+      <details class="advanced">
+        <summary>
+          Ajustar tarifas de referencia
+          <app-icon name="chevron-down" [size]="18" />
+        </summary>
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="trst">Tarifa RST <span class="label-hint">(%)</span></label>
+            <input id="trst" class="input" type="number" inputmode="decimal" min="0" max="15" step="0.1" formControlName="tarifaRstPct" />
+          </div>
+          <div class="field">
+            <label class="label" for="tica">Tarifa ICA <span class="label-hint">(por mil)</span></label>
+            <input id="tica" class="input" type="number" inputmode="decimal" min="0" max="20" step="0.5" formControlName="tarifaIcaPorMil" />
+          </div>
+          <div class="field field--full">
+            <label class="label" for="uvt">Valor UVT {{ params.anio }} <span class="label-hint">(en pesos)</span></label>
+            <input id="uvt" class="input" type="number" inputmode="numeric" min="1" step="1" formControlName="uvt" />
+          </div>
+        </div>
+        <p class="hint">
+          Las tarifas por defecto son aproximaciones de referencia para fines educativos. Verifica los valores vigentes con un NAF, la DIAN
+          o el Estatuto Tributario Distrital.
+        </p>
+      </details>
+      <a class="btn btn--outline jump-result" routerLink="." fragment="resultado">
+        Ver mi resultado <app-icon name="chevron-down" [size]="20" />
+      </a>
+    </form>
+
+    <aside id="resultado" class="tool-result" aria-labelledby="trib-resultado" aria-live="polite">
+      <h2 id="trib-resultado">Lo que significaría para ti</h2>
+      <p class="muted small">Ingresos brutos estimados al año</p>
+      <p class="result-big">{{ r().ingresosAnuales | cop }}</p>
+      <p class="small muted">Equivalen a {{ r().ingresosUvt | number: '1.0-0' }} UVT.</p>
+
+      <ul class="flags">
+        <li [class.on]="r().debeDeclararRenta">
+          <app-icon [name]="r().debeDeclararRenta ? 'alert' : 'check-circle'" [size]="18" />
+          <span>
+            @if (r().debeDeclararRenta) {
+              Superas {{ params.topeDeclararRentaUvt | number }} UVT: como persona natural tendrías que declarar renta (declarar no siempre significa pagar).
+            } @else {
+              Por ingresos, estás por debajo del tope para declarar renta ({{ params.topeDeclararRentaUvt | number }} UVT).
+            }
+          </span>
+        </li>
+        <li [class.on]="!r().puedeSerNoResponsableIva">
+          <app-icon [name]="r().puedeSerNoResponsableIva ? 'check-circle' : 'alert'" [size]="18" />
+          <span>
+            @if (r().puedeSerNoResponsableIva) {
+              Podrías ser «no responsable de IVA» (menos de {{ params.topeNoResponsableIvaUvt | number }} UVT y otros requisitos).
+            } @else {
+              Superas {{ params.topeNoResponsableIvaUvt | number }} UVT: podrías ser responsable de IVA. Busca orientación.
+            }
+          </span>
+        </li>
+      </ul>
+
+      <div class="scenarios">
+        <div class="scenario">
+          <span class="badge">Escenario A</span>
+          <h3>Régimen Simple (RST)</h3>
+          <p class="scenario-value">{{ r().rstAnual | cop }} <small>al año</small></p>
+          <p class="small muted">≈ {{ r().rstBimestral | cop }} cada dos meses. Un solo pago que ya incluye el ICA consolidado.</p>
+          @if (!r().dentroPrimerRangoRst) {
+            <p class="small warn">Tus ingresos superan el primer rango del RST; la tarifa real sería mayor.</p>
+          }
+        </div>
+        <div class="scenario">
+          <span class="badge badge--sun">Escenario B</span>
+          <h3>ICA distrital ordinario</h3>
+          <p class="scenario-value">{{ r().icaAnual | cop }} <small>al año</small></p>
+          <p class="small muted">Impuesto municipal sobre tus ingresos, sin contar otros impuestos ni sobretasas.</p>
+        </div>
+      </div>
+
+      <div class="verdict verdict--rojo">
+        <app-icon name="alert" />
+        <div>
+          <strong>El riesgo de no hacer nada</strong>
+          <p>
+            Una declaración presentada tarde o no presentada puede generar sanciones desde
+            {{ r().sancionMinima | cop }} ({{ params.sancionMinimaUvt }} UVT) cada una, además de intereses.
+          </p>
+        </div>
+      </div>
+
+      <div class="verdict verdict--verde">
+        <app-icon name="shield" />
+        <div>
+          <strong>Sobre tus subsidios</strong>
+          <p>Tener RUT no te saca por sí solo del Sisbén ni de Renta Ciudadana. La focalización mira tus condiciones de vida e ingresos reales.</p>
+        </div>
+      </div>
+
+      <a routerLink="/inscripcion" class="btn btn--primary">
+        Quiero que me lo expliquen en mi puesto
+        <app-icon name="arrow-right" [size]="20" />
+      </a>
+    </aside>
+  </div>
+
+  <div class="container">
+    <div class="note note--sun tool-disclaimer">
+      <app-icon name="info" [size]="20" />
+      <p>
+        <strong>Esto no es asesoría tributaria.</strong> El simulador simplifica la normativa (art. 908 del Estatuto Tributario, régimen de ICA de
+        Barranquilla y topes en UVT de {{ params.anio }}) con fines educativos. Antes de tomar decisiones, acércate a un Núcleo de Apoyo Contable
+        y Fiscal (NAF) o a un contador público.
+      </p>
+    </div>
+  </div>
+</section>

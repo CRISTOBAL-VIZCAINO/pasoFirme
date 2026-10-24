@@ -1,0 +1,93 @@
+<app-page-hero
+  eyebrow="Herramienta · Autodiagnóstico"
+  title="¿Cómo está la salud financiera de tu negocio?"
+  lead="Responde 8 preguntas con sinceridad. No hay respuestas buenas ni malas, y nadie más verá tus resultados."
+  [breadcrumbs]="[{ label: 'Herramientas', path: '/herramientas' }, { label: 'Autodiagnóstico' }]"
+/>
+
+<section class="section">
+  <div class="container container--narrow">
+    <div
+      class="progress"
+      role="progressbar"
+      aria-label="Progreso del autodiagnóstico"
+      [attr.aria-valuenow]="progreso().toFixed(0)"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <div class="progress-fill" [style.width.%]="progreso()"></div>
+    </div>
+
+    @if (!terminado()) {
+      <div class="card quiz" id="diagnostico-foco" tabindex="-1">
+        <p class="eyebrow">Pregunta {{ indice() + 1 }} de {{ preguntas.length }} · {{ dimensiones[actual().dimension].nombre }}</p>
+        <fieldset class="answers">
+          <legend><h2>{{ actual().texto }}</h2></legend>
+          @for (op of opciones; track op.valor) {
+            <label class="answer" [class.is-checked]="respuestas()[actual().id] === op.valor">
+              <input
+                type="radio"
+                [name]="actual().id"
+                [value]="op.valor"
+                [checked]="respuestas()[actual().id] === op.valor"
+                (change)="responder(op.valor)"
+              />
+              <span class="radio" aria-hidden="true"></span>
+              {{ op.texto }}
+            </label>
+          }
+        </fieldset>
+        <div class="quiz-nav">
+          <button type="button" class="btn btn--outline btn--sm" (click)="anterior()" [disabled]="indice() === 0">
+            <app-icon name="arrow-left" [size]="18" /> Anterior
+          </button>
+          <button type="button" class="btn btn--teal" (click)="siguiente()" [disabled]="!respuestas()[actual().id]">
+            {{ indice() === preguntas.length - 1 ? 'Ver mi resultado' : 'Siguiente' }}
+            <app-icon name="arrow-right" [size]="18" />
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="results" id="diagnostico-foco" tabindex="-1" aria-live="polite">
+        <div class="card summary summary--{{ resultado().nivel }}">
+          <div class="score" aria-hidden="true">
+            <svg viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="52" class="track" />
+              <circle cx="60" cy="60" r="52" class="value" [attr.stroke-dasharray]="(resultado().total / 100) * 326.7 + ' 326.7'" />
+            </svg>
+            <span>{{ resultado().total }}</span>
+          </div>
+          <div>
+            <p class="eyebrow">Tu resultado: {{ resultado().total }} de 100</p>
+            <h2>{{ niveles[resultado().nivel].titulo }}</h2>
+            <p class="lead">{{ niveles[resultado().nivel].texto }}</p>
+          </div>
+        </div>
+
+        <div class="grid grid--3 dims">
+          @for (d of resultado().dimensiones; track d.dimension) {
+            <article class="card dim">
+              <h3>{{ dimensiones[d.dimension].nombre }}</h3>
+              <div class="meter" aria-hidden="true">
+                <div class="meter-fill meter-fill--{{ d.nivel }}" [style.width.%]="d.porcentaje"></div>
+              </div>
+              <p class="small"><strong>{{ d.porcentaje }}%</strong> · {{ niveles[d.nivel].titulo }}</p>
+              <p class="small">{{ dimensiones[d.dimension].consejo[d.nivel] }}</p>
+            </article>
+          }
+        </div>
+
+        <div class="btn-row actions">
+          <a routerLink="/inscripcion" class="btn btn--primary">
+            Quiero acompañamiento gratuito
+            <app-icon name="arrow-right" [size]="20" />
+          </a>
+          <a routerLink="/herramientas/caja-diaria" class="btn btn--outline">Calcular mi ganancia real</a>
+          <button type="button" class="btn btn--outline" (click)="reiniciar()">
+            <app-icon name="refresh" [size]="18" /> Volver a empezar
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</section>

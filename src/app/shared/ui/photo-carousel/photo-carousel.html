@@ -1,0 +1,63 @@
+<div class="carousel" role="region" aria-roledescription="carrusel" [attr.aria-label]="label()">
+  <ul class="track" #track tabindex="0" (scroll)="onScroll()" aria-live="off">
+    @for (foto of fotos(); track foto.src; let i = $index) {
+      <li class="slide" role="group" aria-roledescription="foto" [attr.aria-label]="i + 1 + ' de ' + fotos().length">
+        <figure>
+          <div class="frame">
+            @if (!faltantes().has(i)) {
+              <img [src]="foto.src" [alt]="foto.alt" loading="lazy" decoding="async" (error)="marcarFaltante(i)" />
+            } @else {
+              <div class="placeholder">
+                <app-icon name="camera" [size]="36" />
+                <p class="ph-title">Espacio para foto</p>
+                <p class="ph-text">{{ foto.sugerencia }}</p>
+                <code class="ph-file">public/{{ foto.src }}</code>
+              </div>
+            }
+          </div>
+          <figcaption>
+            <strong>{{ foto.titulo }}</strong>
+            <span><app-icon name="map-pin" [size]="14" /> {{ foto.lugar }}</span>
+          </figcaption>
+        </figure>
+      </li>
+    }
+  </ul>
+
+  <div class="controls">
+    <div class="dots">
+      @for (foto of fotos(); track foto.src; let i = $index) {
+        <button
+          type="button"
+          class="dot"
+          [class.is-active]="activo() === i"
+          [attr.aria-current]="activo() === i ? 'true' : null"
+          [attr.aria-label]="'Ver foto ' + (i + 1) + ': ' + foto.titulo"
+          (click)="ir(i)"
+        ></button>
+      }
+    </div>
+    <div class="buttons">
+      @if (!movimientoReducido()) {
+        <button
+          type="button"
+          class="ctrl"
+          (click)="reproduciendo.set(!reproduciendo())"
+          [attr.aria-label]="reproduciendo() ? 'Pausar el carrusel' : 'Reproducir el carrusel'"
+        >
+          @if (reproduciendo()) {
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+          } @else {
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z" /></svg>
+          }
+        </button>
+      }
+      <button type="button" class="ctrl" (click)="anterior()" aria-label="Foto anterior">
+        <app-icon name="arrow-left" [size]="20" />
+      </button>
+      <button type="button" class="ctrl" (click)="siguiente()" aria-label="Foto siguiente">
+        <app-icon name="arrow-right" [size]="20" />
+      </button>
+    </div>
+  </div>
+</div>

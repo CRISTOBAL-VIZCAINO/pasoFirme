@@ -1,0 +1,148 @@
+<app-page-hero
+  eyebrow="Herramienta · Organización financiera"
+  title="¿Cuánto gana de verdad tu negocio?"
+  lead="Lo que queda en el cajón no siempre es ganancia. Escribe tus números de un día normal y descubre si la «caja única» se está comiendo tu capital."
+  [breadcrumbs]="[{ label: 'Herramientas', path: '/herramientas' }, { label: 'Caja diaria' }]"
+/>
+
+<section class="section">
+  <div class="container tool-layout">
+    <form class="tool-form" [formGroup]="form" (submit)="$event.preventDefault()" aria-describedby="caja-intro">
+      <h2>Tu día normal</h2>
+      <p id="caja-intro" class="muted small">Usa valores aproximados. Puedes cambiarlos cuantas veces quieras.</p>
+
+      <div class="field">
+        <label class="label" for="ventas">¿Cuánto vendes en un día normal?</label>
+        <div class="input-prefix">
+          <span aria-hidden="true">$</span>
+          <input id="ventas" class="input" type="number" inputmode="numeric" min="0" step="5000" formControlName="ventasDiarias" />
+        </div>
+      </div>
+
+      <fieldset class="field choice-group">
+        <legend class="label">¿Cuántos días a la semana trabajas?</legend>
+        @for (d of diasOpciones; track d) {
+          <label class="choice">
+            <input type="radio" formControlName="diasSemana" [value]="d" />
+            <span>{{ d }} días</span>
+          </label>
+        }
+      </fieldset>
+
+      <div class="field">
+        <label class="label" for="costo">
+          De cada $100 que vendes, ¿cuánto te costó la mercancía?
+          <span class="label-hint">(lo que pagas al proveedor)</span>
+        </label>
+        <input id="costo" class="range" type="range" min="0" max="90" step="5" formControlName="costoMercanciaPct" />
+        <p class="value-echo" aria-live="polite">${{ costoPct() }} de cada $100 vendidos</p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="gastos">
+          Gastos diarios del negocio
+          <span class="label-hint">(bolsas, transporte, pago del puesto, celaduría)</span>
+        </label>
+        <div class="input-prefix">
+          <span aria-hidden="true">$</span>
+          <input id="gastos" class="input" type="number" inputmode="numeric" min="0" step="1000" formControlName="gastosNegocioDiarios" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="casa">¿Cuánto sacas al día para la casa?</label>
+        <div class="input-prefix">
+          <span aria-hidden="true">$</span>
+          <input id="casa" class="input" type="number" inputmode="numeric" min="0" step="5000" formControlName="retiroCasaDiario" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="deuda">
+          Cuota diaria de préstamos
+          <span class="label-hint">(gota a gota u otros; 0 si no tienes)</span>
+        </label>
+        <div class="input-prefix">
+          <span aria-hidden="true">$</span>
+          <input id="deuda" class="input" type="number" inputmode="numeric" min="0" step="1000" formControlName="cuotaDeudaDiaria" />
+        </div>
+      </div>
+      <a class="btn btn--outline jump-result" routerLink="." fragment="resultado">
+        Ver mi resultado <app-icon name="chevron-down" [size]="20" />
+      </a>
+    </form>
+
+    <aside id="resultado" class="tool-result" aria-labelledby="caja-resultado" aria-live="polite">
+      <h2 id="caja-resultado">Tu resultado</h2>
+      <p class="muted small">Ganancia real de tu negocio por día</p>
+      <p class="result-big">{{ r().gananciaRealDiaria | cop }}</p>
+      <p class="small muted">Margen real: {{ r().margenRealPct.toFixed(0) }}% de lo que vendes.</p>
+
+      @switch (r().semaforo) {
+        @case ('verde') {
+          <div class="verdict verdict--verde">
+            <app-icon name="check-circle" />
+            <div>
+              <strong>¡Vas con paso firme!</strong>
+              <p>Tu negocio genera más de lo que sacas. Te sobran {{ r().balanceSemanal | cop }} a la semana para ahorrar o resurtir.</p>
+            </div>
+          </div>
+        }
+        @case ('amarillo') {
+          <div class="verdict verdict--amarillo">
+            <app-icon name="alert" />
+            <div>
+              <strong>Ojo: vas al límite</strong>
+              <p>Sacas casi todo lo que ganas. Cualquier imprevisto te puede empujar al gota a gota.</p>
+            </div>
+          </div>
+        }
+        @case ('rojo') {
+          <div class="verdict verdict--rojo">
+            <app-icon name="alert" />
+            <div>
+              <strong>Tu negocio se está descapitalizando</strong>
+              <p>Sacas más de lo que gana. Cada semana pierdes unos {{ -r().balanceSemanal | cop }} de capital para resurtir.</p>
+            </div>
+          </div>
+        }
+      }
+
+      <ul class="result-rows">
+        <li class="is-pos"><span>Ventas del día</span><b>{{ form.controls.ventasDiarias.value | cop }}</b></li>
+        <li class="is-neg"><span>Costo de la mercancía</span><b>−{{ r().costoMercanciaDiario | cop }}</b></li>
+        <li class="is-neg"><span>Gastos del negocio</span><b>−{{ form.controls.gastosNegocioDiarios.value | cop }}</b></li>
+        <li><span>Ganancia real</span><b>{{ r().gananciaRealDiaria | cop }}</b></li>
+        <li class="is-neg"><span>Para la casa</span><b>−{{ form.controls.retiroCasaDiario.value | cop }}</b></li>
+        @if (form.controls.cuotaDeudaDiaria.value > 0) {
+          <li class="is-neg"><span>Cuota de préstamos</span><b>−{{ form.controls.cuotaDeudaDiaria.value | cop }}</b></li>
+        }
+        <li class="is-total"><span>Queda en el negocio al mes</span><b>{{ r().balanceMensual | cop }}</b></li>
+      </ul>
+
+      @if (r().sueldoSugeridoDiario > 0) {
+        <h3>Nuestra sugerencia</h3>
+        <p class="small">
+          Págate un <strong>sueldo fijo de {{ r().sueldoSugeridoDiario | cop }} al día</strong> (color azul de la cartilla) y guarda
+          <strong>{{ r().ahorroSugeridoDiario | cop }}</strong> como ahorro (color amarillo). Así la casa tiene su plata segura y el negocio
+          no pierde capital.
+        </p>
+      }
+
+      <a routerLink="/inscripcion" class="btn btn--primary">
+        Quiero que me ayuden a ordenar mi caja
+        <app-icon name="arrow-right" [size]="20" />
+      </a>
+    </aside>
+  </div>
+
+  <div class="container">
+    <div class="note tool-disclaimer">
+      <app-icon name="info" [size]="20" />
+      <p>
+        Herramienta pedagógica con cálculos aproximados (un mes ≈ 4,33 semanas). La sugerencia de sueldo usa la regla 80/20 sobre la ganancia real después de
+        deudas; un brigadista puede ajustarla a tu realidad.
+      </p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,102 @@
+<app-page-hero
+  eyebrow="Herramienta · Crédito justo"
+  title="Gota a gota vs. microcrédito"
+  lead="El gota a gota llega rápido, pero se lleva tu ganancia. Compara cuánto pagas en intereses frente a un microcrédito formal."
+  [breadcrumbs]="[{ label: 'Herramientas', path: '/herramientas' }, { label: 'Gota a gota vs. microcrédito' }]"
+/>
+
+<section class="section">
+  <div class="container tool-layout">
+    <form class="tool-form" [formGroup]="form" (submit)="$event.preventDefault()">
+      <h2>El préstamo</h2>
+
+      <div class="field">
+        <label class="label" for="monto">¿Cuánta plata necesitas?</label>
+        <div class="input-prefix">
+          <span aria-hidden="true">$</span>
+          <input id="monto" class="input" type="number" inputmode="numeric" min="0" step="50000" formControlName="monto" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="plazo">¿En cuántos meses lo pagarías?</label>
+        <input id="plazo" class="range" type="range" min="1" max="12" step="1" formControlName="plazoMeses" />
+        <p class="value-echo" aria-live="polite">{{ plazo() }} {{ plazo() === 1 ? 'mes' : 'meses' }}</p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="tinf">
+          Interés del gota a gota <span class="label-hint">(% mensual)</span>
+        </label>
+        <input id="tinf" class="input" type="number" inputmode="decimal" min="0" max="100" step="1" formControlName="tasaInformalMensual" />
+        <p class="hint">El promedio documentado en el Atlántico es del 20% mensual (Modelo PEDAF, Malambo).</p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="tfor">
+          Interés del microcrédito formal <span class="label-hint">(% mensual)</span>
+        </label>
+        <input id="tfor" class="input" type="number" inputmode="decimal" min="0" max="10" step="0.1" formControlName="tasaFormalMensual" />
+        <p class="hint">Referencia del proyecto: entre 1,5% y 2,5% mensual. Consulta siempre la tasa real con la entidad.</p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="dias">Días de cobro al mes del gota a gota</label>
+        <input id="dias" class="input" type="number" inputmode="numeric" min="1" max="31" step="1" formControlName="diasCobroMes" />
+      </div>
+      <a class="btn btn--outline jump-result" routerLink="." fragment="resultado">
+        Ver mi resultado <app-icon name="chevron-down" [size]="20" />
+      </a>
+    </form>
+
+    <aside id="resultado" class="tool-result" aria-labelledby="credito-resultado" aria-live="polite">
+      <h2 id="credito-resultado">Lo que te ahorrarías</h2>
+      <p class="muted small">Diferencia en intereses durante {{ plazo() }} {{ plazo() === 1 ? 'mes' : 'meses' }}</p>
+      <p class="result-big">{{ r().ahorro | cop }}</p>
+      @if (r().veces > 1) {
+        <p class="small">Con el gota a gota pagas <strong>{{ r().veces | number: '1.1-1' }} veces más</strong> intereses.</p>
+      }
+
+      <div class="bars" role="img" [attr.aria-label]="'Intereses gota a gota ' + (r().interesesInformal | cop) + ' frente a microcrédito ' + (r().interesesFormal | cop)">
+        <div class="bar">
+          <div class="bar-head"><span>Intereses gota a gota</span><b>{{ r().interesesInformal | cop }}</b></div>
+          <div class="bar-track"><div class="bar-fill bar-fill--coral" [style.width.%]="anchos().informal"></div></div>
+        </div>
+        <div class="bar">
+          <div class="bar-head"><span>Intereses microcrédito</span><b>{{ r().interesesFormal | cop }}</b></div>
+          <div class="bar-track"><div class="bar-fill bar-fill--teal" [style.width.%]="anchos().formal"></div></div>
+        </div>
+      </div>
+
+      <ul class="result-rows">
+        <li class="is-neg"><span>Cuota diaria del gota a gota</span><b>{{ r().cuotaDiariaInformal | cop }}</b></li>
+        <li class="is-neg"><span>Total a pagar gota a gota</span><b>{{ r().totalInformal | cop }}</b></li>
+        <li class="is-pos"><span>Cuota mensual microcrédito</span><b>{{ r().cuotaMensualFormal | cop }}</b></li>
+        <li class="is-pos"><span>Total a pagar microcrédito</span><b>{{ r().totalFormal | cop }}</b></li>
+      </ul>
+
+      <div class="verdict verdict--amarillo">
+        <app-icon name="shield" />
+        <div>
+          <strong>¿Por qué no te prestan en el banco?</strong>
+          <p>Casi siempre, porque no hay registros que demuestren lo que vende tu negocio. Con Paso Firme construimos esa prueba.</p>
+        </div>
+      </div>
+
+      <a routerLink="/inscripcion" class="btn btn--primary">
+        Quiero construir mi perfil de crédito
+        <app-icon name="arrow-right" [size]="20" />
+      </a>
+    </aside>
+  </div>
+
+  <div class="container">
+    <div class="note tool-disclaimer">
+      <app-icon name="info" [size]="20" />
+      <p>
+        Cálculo pedagógico. El gota a gota se modela con interés simple sobre el capital inicial cada mes; el microcrédito, con cuota fija
+        (sistema francés). Los microcréditos reales pueden incluir comisiones y seguros: compara siempre la tasa efectiva anual.
+      </p>
+    </div>
+  </div>
+</section>

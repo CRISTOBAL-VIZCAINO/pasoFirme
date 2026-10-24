@@ -1,0 +1,160 @@
+<app-page-hero
+  eyebrow="Impacto"
+  title="Medimos el éxito en bienestar, no solo en pesos"
+  lead="Cada peso invertido en Paso Firme debe devolver más del doble en valor social. Así lo vamos a medir y a demostrar."
+  [breadcrumbs]="[{ label: 'Impacto' }]"
+/>
+
+<!-- METAS -->
+<section class="section" aria-labelledby="metas-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Metas del piloto"
+      title="Lo que nos comprometemos a lograr"
+      headingId="metas-title"
+      intro="Metas definidas por el equipo fundador para el piloto controlado. Son compromisos por validar, no resultados alcanzados."
+    />
+    <div class="grid grid--4">
+      @for (m of metas; track m.texto; let i = $index) {
+        <div class="metric" appReveal [revealDelay]="(i % 4) * 70">
+          <span class="stat">{{ m.valor }}</span>
+          <p class="stat-label">{{ m.texto }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- SROI -->
+<section class="section section--navy" aria-labelledby="sroi-title">
+  <div class="container split split--start">
+    <div>
+      <p class="eyebrow">Metodología</p>
+      <h2 id="sroi-title">Retorno Social de la Inversión (SROI)</h2>
+      <p class="lead">
+        Inspirados en la metodología del Proyecto INSOLA y en las guías internacionales de SROI, monetizamos los cambios reales en la vida de
+        los comerciantes.
+      </p>
+      <div class="formula" role="img" aria-label="SROI es igual al valor presente neto de los impactos sociales y económicos dividido entre el valor presente neto de los insumos y costos operativos">
+        <span class="formula-lhs">SROI =</span>
+        <span class="fraction">
+          <span>Σ Valor presente de impactos sociales y económicos</span>
+          <span>Σ Valor presente de insumos y costos operativos</span>
+        </span>
+      </div>
+      <p class="goal"><app-icon name="target" [size]="22" /> Meta: <strong>SROI &gt; 2,5</strong></p>
+    </div>
+    <div class="grid grid--2 proxies">
+      @for (p of proxies; track p.titulo; let i = $index) {
+        <article class="proxy" appReveal [revealDelay]="i * 70">
+          <span class="icon-badge icon-badge--sun"><app-icon [name]="p.icon" [size]="22" /></span>
+          <h3>{{ p.titulo }}</h3>
+          <p>{{ p.texto }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- TABLERO DEMO -->
+<section class="section" aria-labelledby="tablero-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Gestión con datos"
+      title="Así se verá nuestro tablero de control"
+      headingId="tablero-title"
+      intro="Tres OKR guían la operación diaria. Los tableros se alimentan automáticamente de los registros por WhatsApp."
+    />
+    <div class="dashboard">
+      <div class="dash-banner"><app-icon name="info" [size]="16" /> Tablero demostrativo con datos simulados</div>
+      <div class="kpis">
+        <div class="kpi">
+          <span class="kpi-label">Comerciantes que separan la caja a 30 días</span>
+          <span class="kpi-value">61%</span>
+          <span class="kpi-target">Meta: 60%</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Expedientes entregados a microfinancieras</span>
+          <span class="kpi-value">18</span>
+          <span class="kpi-target">Meta del piloto: 15</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Tiempo promedio de registro in-situ</span>
+          <span class="kpi-value">2:40 min</span>
+          <span class="kpi-target">Meta: menos de 3 min</span>
+        </div>
+      </div>
+      <figure class="chart">
+        <figcaption>Adopción del registro diario por semana (%)</figcaption>
+        <div class="bars-v" role="img" aria-label="Adopción simulada que crece del 22% en la semana 1 al 61% en la semana 8">
+          @for (v of demoAdopcion; track $index) {
+            <div class="col">
+              <span class="col-value">{{ v }}%</span>
+              <div class="col-bar" [style.height.%]="v"></div>
+              <span class="col-label">S{{ $index + 1 }}</span>
+            </div>
+          }
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- HOJA DE RUTA -->
+<section class="section section--sand" aria-labelledby="ruta-title">
+  <div class="container">
+    <app-section-heading eyebrow="Hoja de ruta" title="Avanzar con condiciones" headingId="ruta-title">
+      <p>
+        Nuestro dictamen como equipo fundador es <strong>avanzar con condiciones</strong>: escalar solo cuando el piloto demuestre que el modelo
+        funciona en la calle.
+      </p>
+    </app-section-heading>
+    <ol class="phases">
+      @for (f of fases; track f.fase) {
+        <li class="phase phase--{{ f.estado }}">
+          <span class="badge" [class.badge--sun]="f.estado === 'siguiente'" [class.badge--navy]="f.estado === 'futuro'">
+            {{ f.fase }} · {{ f.estado === 'hecho' ? 'Completada' : f.estado === 'siguiente' ? 'Próxima' : 'Futura' }}
+          </span>
+          <h3>{{ f.titulo }}</h3>
+          <p>{{ f.texto }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- FUENTES -->
+<section class="section" aria-labelledby="fuentes-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Evidencia"
+      title="Respaldo empírico del proyecto"
+      headingId="fuentes-title"
+      intro="Paso Firme se apoya en investigación aplicada y fuentes institucionales sobre la economía popular del Atlántico."
+    />
+    <div class="table-wrap">
+      <table class="table table--stack">
+        <caption class="visually-hidden">Fuentes de investigación y su aporte</caption>
+        <thead>
+          <tr>
+            <th scope="col">Fuente</th>
+            <th scope="col">Aporte clave</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of fuentes; track f.nombre) {
+            <tr>
+              <th scope="row">{{ f.nombre }}</th>
+              <td>{{ f.aporte }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted sources-note">
+      ¿Quieres conocer el estudio completo? <a routerLink="/entidades" fragment="contacto-entidad">Escríbenos</a>.
+    </p>
+  </div>
+</section>
+
+<app-cta-banner />

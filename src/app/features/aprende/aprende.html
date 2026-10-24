@@ -1,0 +1,150 @@
+<app-page-hero
+  eyebrow="Aprende"
+  title="Cuentas claras, sin tecnicismos"
+  lead="Desmontamos los mitos que frenan a los comerciantes, te explicamos la Cartilla de Caja Diaria y respondemos tus preguntas."
+  [breadcrumbs]="[{ label: 'Aprende' }]"
+>
+  <nav class="jump" aria-label="Secciones de la página">
+    <a routerLink="/aprende" fragment="mitos">Mitos y realidades</a>
+    <a routerLink="/aprende" fragment="cartilla">La cartilla</a>
+    <a routerLink="/aprende" fragment="glosario">Glosario</a>
+    <a routerLink="/aprende" fragment="preguntas">Preguntas frecuentes</a>
+  </nav>
+</app-page-hero>
+
+<!-- MITOS -->
+<section id="mitos" class="section" aria-labelledby="mitos-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Mitos y realidades"
+      title="¿Mito o realidad?"
+      headingId="mitos-title"
+      intro="Toca cada tarjeta para descubrir la realidad detrás de lo que se dice en la calle."
+    />
+    <div class="grid grid--3">
+      @for (m of mitos; track m.mito; let i = $index) {
+        <button
+          type="button"
+          class="myth"
+          [class.is-flipped]="revelados().has(i)"
+          [attr.aria-pressed]="revelados().has(i)"
+          (click)="alternar(i)"
+          appReveal
+          [revealDelay]="(i % 3) * 70"
+        >
+          @if (!revelados().has(i)) {
+            <span class="myth-tag myth-tag--no"><app-icon name="help" [size]="16" /> Lo que se dice</span>
+            <span class="myth-text">«{{ m.mito }}»</span>
+            <span class="myth-cta">Ver la realidad <app-icon name="arrow-right" [size]="16" /></span>
+          } @else {
+            <span class="myth-tag myth-tag--yes"><app-icon name="check" [size]="16" /> La realidad</span>
+            <span class="myth-answer">{{ m.realidad }}</span>
+            <span class="myth-cta">Volver <app-icon name="refresh" [size]="16" /></span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CARTILLA -->
+<section id="cartilla" class="section section--sand" aria-labelledby="cartilla-title">
+  <div class="container split">
+    <div>
+      <p class="eyebrow">Herramienta pedagógica</p>
+      <h2 id="cartilla-title">La Cartilla de Caja Diaria</h2>
+      <p class="lead">
+        Una hoja por día, cuatro colores y cinco minutos. Diseñada para personas con poco tiempo, sin necesidad de saber contabilidad.
+      </p>
+      <ul class="colors">
+        @for (c of colores; track c.nombre) {
+          <li>
+            <span class="swatch" [style.background]="c.color" aria-hidden="true"></span>
+            <div>
+              <strong>{{ c.nombre }}</strong>
+              <span>{{ c.uso }}</span>
+            </div>
+          </li>
+        }
+      </ul>
+      <p class="small muted">
+        ¿Tienes WhatsApp? Puedes tomarle una foto a la cartilla o mandar una nota de voz: el copiloto de IA la convierte en registros
+        ordenados.
+      </p>
+    </div>
+
+    <figure class="sheet" aria-labelledby="sheet-caption">
+      <div class="sheet-head">
+        <strong>Martes</strong>
+        <span class="small muted">Cartilla de Caja Diaria</span>
+      </div>
+      <table class="sheet-table">
+        <caption id="sheet-caption" class="visually-hidden">Ejemplo de un día en la Cartilla de Caja Diaria</caption>
+        <tbody>
+          <tr class="r-green"><th scope="row">Vendí</th><td>$ 230.000</td></tr>
+          <tr class="r-red"><th scope="row">Mercancía</th><td>$ 80.000</td></tr>
+          <tr class="r-red"><th scope="row">Carretillero</th><td>$ 10.000</td></tr>
+          <tr class="r-blue"><th scope="row">Mi sueldo (casa)</th><td>$ 100.000</td></tr>
+          <tr class="r-yellow"><th scope="row">Ahorro</th><td>$ 40.000</td></tr>
+        </tbody>
+      </table>
+      <p class="sheet-foot">Ganancia del día: <strong>$ 140.000</strong></p>
+    </figure>
+  </div>
+</section>
+
+<!-- GLOSARIO -->
+<section id="glosario" class="section" aria-labelledby="glosario-title">
+  <div class="container">
+    <app-section-heading eyebrow="Glosario" title="Palabras que vas a escuchar" headingId="glosario-title" />
+    <div class="field search">
+      <label class="label" for="buscar">Buscar una palabra</label>
+      <input
+        id="buscar"
+        class="input"
+        type="search"
+        placeholder="Ej.: RUT, margen, UVT…"
+        [value]="busqueda()"
+        (input)="busqueda.set($any($event.target).value)"
+        aria-controls="lista-glosario"
+      />
+    </div>
+    <p class="visually-hidden" aria-live="polite">{{ glosario().length }} términos encontrados</p>
+    <div id="lista-glosario">
+      @if (glosario().length) {
+        <dl class="glossary">
+          @for (t of glosario(); track t.termino) {
+            <div class="term">
+              <dt>{{ t.termino }}</dt>
+              <dd>{{ t.definicion }}</dd>
+            </div>
+          }
+        </dl>
+      } @else {
+        <p class="muted">No encontramos esa palabra. Pregúntale a tu brigadista o escríbenos por WhatsApp.</p>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="preguntas" class="section section--white" aria-labelledby="faq-title">
+  <div class="container container--narrow">
+    <app-section-heading eyebrow="Preguntas frecuentes" title="Lo que más nos preguntan" headingId="faq-title" align="center" />
+    <div class="accordion">
+      @for (f of faq; track f.pregunta; let first = $first) {
+        <details [open]="first">
+          <summary>
+            {{ f.pregunta }}
+            <app-icon name="chevron-down" [size]="20" />
+          </summary>
+          <div class="accordion-body">
+            <p>{{ f.respuesta }}</p>
+          </div>
+        </details>
+      }
+    </div>
+  </div>
+</section>
+
+<app-cta-banner title="¿Te quedó alguna duda?" text="Un brigadista puede resolverla en tu puesto, sin costo y en tu idioma." />

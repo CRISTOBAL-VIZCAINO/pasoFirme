@@ -1,0 +1,152 @@
+<app-page-hero
+  eyebrow="Nosotros"
+  title="Nacimos en la academia, trabajamos en la calle"
+  lead="Paso Firme (antes CONSULPOPULAR) es una startup social que convierte la investigación sobre la economía popular de Barranquilla en acompañamiento real para los comerciantes."
+  [breadcrumbs]="[{ label: 'Nosotros' }]"
+/>
+
+<!-- MTP -->
+<section class="section" aria-labelledby="mtp-title">
+  <div class="container">
+    <div class="mtp" appReveal>
+      <p class="eyebrow" id="mtp-title">Nuestro propósito transformador masivo</p>
+      <blockquote>«{{ site.mtp }}»</blockquote>
+      <p class="muted">
+        Un propósito que habla de dignidad y no de impuestos: moviliza a los brigadistas, genera confianza en los comerciantes y convoca a los
+        aliados institucionales.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORIA -->
+<section class="section section--sand" aria-labelledby="historia-title">
+  <div class="container split split--start">
+    <div>
+      <p class="eyebrow">Nuestra historia</p>
+      <h2 id="historia-title">De un estudio de prefactibilidad a una startup social</h2>
+      <p>
+        Todo empezó en la Facultad de Ciencias Empresariales de UNIMINUTO, con la investigación
+        <em>«Inclusión socioeconómica y educativa de los comerciantes informales del Paseo Bolívar en Barranquilla»</em>, que analizó el
+        comportamiento, la educación financiera, los costos y la protección social de los vendedores del centro histórico.
+      </p>
+      <p>
+        En el Programa Internacional en Transformación Digital y Creación de Startups (UNAB · UNIMINUTO), la idea se convirtió en un modelo de
+        negocio: un consultorio contable que va al puesto, apoyado por inteligencia artificial y sostenido por comisiones de originación de
+        crédito y convenios institucionales.
+      </p>
+      <p>
+        En el camino tomamos decisiones difíciles: rechazamos reemplazar a los brigadistas por un chatbot, descartamos cobrarle al comerciante
+        y pospusimos la formalización tributaria obligatoria para no generar miedo ni deserción.
+      </p>
+    </div>
+    <div class="card cycle">
+      <h3>Cómo decidimos: nuestro ciclo ejecutivo</h3>
+      <ol class="cycle-steps">
+        <li><strong>Pienso</strong><span>Partimos de lo que creemos como equipo.</span></li>
+        <li><strong>Pregunto</strong><span>Consultamos a la IA y a la evidencia.</span></li>
+        <li><strong>Contrasto</strong><span>Separamos hechos, inferencias y supuestos.</span></li>
+        <li><strong>Decido</strong><span>Aceptamos, modificamos o rechazamos, y explicamos por qué.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- VALORES -->
+<section class="section" aria-labelledby="valores-title">
+  <div class="container">
+    <app-section-heading eyebrow="Valores" title="Lo que nos mueve" headingId="valores-title" />
+    <div class="grid grid--4">
+      @for (v of valores; track v.titulo; let i = $index) {
+        <article class="card" appReveal [revealDelay]="i * 70">
+          <span class="icon-badge icon-badge--sun"><app-icon [name]="v.icon" [size]="24" /></span>
+          <h3>{{ v.titulo }}</h3>
+          <p>{{ v.texto }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ExO -->
+<section class="section section--navy" aria-labelledby="exo-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Organización exponencial"
+      title="Una estructura liviana para crecer sin burocracia"
+      headingId="exo-title"
+      intro="Aplicamos el modelo de Organizaciones Exponenciales (OpenExO) a la escala real de una startup temprana en Colombia."
+    />
+    <div class="grid grid--4">
+      @for (e of exo; track e.titulo; let i = $index) {
+        <article class="exo" appReveal [revealDelay]="i * 70">
+          <span class="icon-badge icon-badge--sun"><app-icon [name]="e.icon" [size]="24" /></span>
+          <span class="exo-kind">{{ i < 2 ? 'SCALE · externo' : 'IDEAS · interno' }}</span>
+          <h3>{{ e.titulo }}</h3>
+          <p>{{ e.texto }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CULTURA -->
+<section class="section" aria-labelledby="cultura-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Cultura"
+      title="Nuestro contrato de seguridad psicológica"
+      headingId="cultura-title"
+      intro="Trabajar con IA solo funciona si el equipo se siente seguro para equivocarse, cuestionar y avisar."
+    />
+    <div class="grid grid--3">
+      @for (a of acuerdos; track a.titulo; let i = $index) {
+        <article class="card agreement" appReveal [revealDelay]="i * 70">
+          <span class="agreement-num" aria-hidden="true">{{ i + 1 }}</span>
+          <span class="icon-badge"><app-icon [name]="a.icon" [size]="24" /></span>
+          <h3>{{ a.titulo }}</h3>
+          <p>{{ a.texto }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPO EN ACCIÓN (carrusel) -->
+<section class="section section--white" aria-labelledby="accion-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Detrás de Paso Firme"
+      title="Nuestro equipo en acción"
+      headingId="accion-title"
+      intro="Investigación, mentoría y trabajo de campo: así construimos el proyecto."
+    />
+    <app-photo-carousel [fotos]="fotosEquipo" label="Fotos del equipo de Paso Firme" />
+  </div>
+</section>
+
+<!-- EQUIPO -->
+<section class="section section--teal" aria-labelledby="equipo-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Equipo fundador"
+      title="Grupo 4"
+      headingId="equipo-title"
+      intro="Programa Internacional en Transformación Digital y Creación de Startups · Universidad Andrés Bello (Chile) y Corporación Universitaria Minuto de Dios (Colombia)."
+    />
+    <ul class="team">
+      @for (p of equipo; track p.nombre) {
+        <li class="member">
+          @if (p.foto && !sinFoto().has(p.nombre)) {
+            <img class="avatar" [src]="p.foto" alt="" loading="lazy" (error)="marcarSinFoto(p.nombre)" />
+          } @else {
+            <span class="avatar" aria-hidden="true">{{ p.iniciales }}</span>
+          }
+          <span class="name">{{ p.nombre }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<app-cta-banner />

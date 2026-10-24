@@ -1,0 +1,73 @@
+<footer class="footer">
+  <div class="container">
+    <div class="top">
+      <div class="about">
+        <app-logo [light]="true" />
+        <p class="mtp">«{{ site.mtp }}»</p>
+        <p class="small">{{ site.sigla }}: Pedagogía contable, Acompañamiento in-situ, Simulación tributaria y Organización financiera.</p>
+      </div>
+
+      <nav aria-label="Programa">
+        <h2>Programa</h2>
+        <ul>
+          <li><a routerLink="/programa">Método P.A.S.O.</a></li>
+          <li><a routerLink="/programa" fragment="ruta">Ruta de 90 días</a></li>
+          <li><a routerLink="/programa" fragment="requisitos">¿Quién puede participar?</a></li>
+          <li><a routerLink="/inscripcion">Inscribe tu negocio</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Herramientas">
+        <h2>Herramientas</h2>
+        <ul>
+          <li><a routerLink="/herramientas/caja-diaria">¿Cuánto ganas de verdad?</a></li>
+          <li><a routerLink="/herramientas/gota-a-gota">Gota a gota vs. microcrédito</a></li>
+          <li><a routerLink="/herramientas/simulador-tributario">Simulador tributario</a></li>
+          <li><a routerLink="/herramientas/autodiagnostico">Autodiagnóstico</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Organización">
+        <h2>Organización</h2>
+        <ul>
+          <li><a routerLink="/entidades">Para entidades</a></li>
+          <li><a routerLink="/impacto">Impacto y SROI</a></li>
+          <li><a routerLink="/aprende">Aprende</a></li>
+          <li><a routerLink="/nosotros">Nosotros</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <h2>Contacto</h2>
+        <ul class="contact">
+          <li>
+            <app-icon name="chat" [size]="18" />
+            <a [href]="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+          <li>
+            <app-icon name="mail" [size]="18" />
+            <a [href]="'mailto:' + site.correo">{{ site.correo }}</a>
+          </li>
+          <li>
+            <app-icon name="map-pin" [size]="18" />
+            <span>{{ site.ubicacion }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trust">
+      <app-icon name="lock" [size]="18" />
+      <p>
+        Paso Firme no es una entidad pública ni financiera, no fiscaliza y no cobra al comerciante. Las calculadoras de este sitio son
+        pedagógicas y no reemplazan la asesoría de un profesional.
+      </p>
+    </div>
+
+    <div class="bottom">
+      <p>© {{ year }} {{ site.nombre }} · Proyecto académico del Programa Internacional en Transformación Digital y Creación de Startups.</p>
+      <p>{{ site.instituciones }}</p>
+      <a routerLink="/privacidad">Tratamiento de datos personales</a>
+    </div>
+  </div>
+</footer>

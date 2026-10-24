@@ -1,0 +1,318 @@
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Economía popular · Barranquilla y el Atlántico</p>
+      <h1 id="hero-title">Tu negocio, con <span class="highlight">paso firme</span>.</h1>
+      <p class="lead">
+        Te acompañamos en tu propio puesto para separar la plata de la casa y la del negocio, saber cuánto ganas de verdad y salir del
+        gota a gota, sin cerrar ni un minuto.
+      </p>
+      <div class="btn-row">
+        <a routerLink="/inscripcion" class="btn btn--primary">
+          Inscribe tu negocio gratis
+          <app-icon name="arrow-right" [size]="20" />
+        </a>
+        <a routerLink="/herramientas/autodiagnostico" class="btn btn--outline">Haz tu autodiagnóstico</a>
+      </div>
+      <ul class="trust-list" aria-label="Nuestros compromisos">
+        <li><app-icon name="check-circle" [size]="18" /> Sin costo para el comerciante</li>
+        <li><app-icon name="check-circle" [size]="18" /> En tu puesto, en horas valle</li>
+        <li><app-icon name="check-circle" [size]="18" /> Confidencial: no fiscalizamos</li>
+      </ul>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="phone">
+        <div class="phone-top">
+          <span class="avatar">PF</span>
+          <div>
+            <strong>Paso Firme</strong>
+            <small>tu copiloto de caja</small>
+          </div>
+        </div>
+        <div class="chat">
+          <div class="msg msg--in voice">
+            <app-icon name="mic" [size]="16" />
+            <span class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <small>0:12</small>
+          </div>
+          <div class="msg msg--in transcript">«Hoy vendí 230 mil, compré 80 de mango y le pagué 10 al carretillero»</div>
+          <div class="msg msg--out">
+            <strong>¡Anotado! ✅</strong>
+            <span class="row"><span>Ventas</span><b class="pos">$230.000</b></span>
+            <span class="row"><span>Mercancía</span><b class="neg">−$80.000</b></span>
+            <span class="row"><span>Gastos</span><b class="neg">−$10.000</b></span>
+            <span class="row total"><span>Ganancia del día</span><b>$140.000</b></span>
+          </div>
+          <div class="msg msg--out small-msg">Recuerda separar tu sueldo de hoy: <b>$100.000</b> pa' la casa y <b>$40.000</b> pa'l ahorro 💪</div>
+        </div>
+      </div>
+
+      <div class="cartilla">
+        <p class="cartilla-title">Cartilla de Caja Diaria</p>
+        <span class="c-row"><i class="dot dot--green"></i> Vendí <b>230.000</b></span>
+        <span class="c-row"><i class="dot dot--red"></i> Gasté <b>90.000</b></span>
+        <span class="c-row"><i class="dot dot--blue"></i> Casa <b>100.000</b></span>
+        <span class="c-row"><i class="dot dot--yellow"></i> Ahorro <b>40.000</b></span>
+      </div>
+
+      <div class="score-chip">
+        <app-icon name="trending-up" [size]="18" />
+        <span>Perfil de crédito<br /><b>en construcción · 84%</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="section" aria-labelledby="problema-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="El problema"
+      title="La trampa que asfixia al comercio popular"
+      headingId="problema-title"
+      intro="Miles de familias del Atlántico viven de un puesto o una tienda. Trabajan duro todos los días, pero cuatro barreras les impiden crecer."
+    />
+    <div class="grid grid--4">
+      @for (p of problemas; track p.titulo; let i = $index) {
+        <article class="card problem" appReveal [revealDelay]="i * 80">
+          <span class="icon-badge icon-badge--{{ p.tone }}"><app-icon [name]="p.icon" [size]="26" /></span>
+          <h3>{{ p.titulo }}</h3>
+          <p>{{ p.texto }}</p>
+          <div class="problem-stat">
+            <span class="stat">{{ p.dato }}</span>
+            <p class="stat-label">{{ p.datoTexto }}</p>
+            <span class="source">Fuente: {{ p.fuente }}</span>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- MÉTODO P.A.S.O. -->
+<section class="section section--navy method" aria-labelledby="metodo-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Nuestro método"
+      title="P.A.S.O.: cuatro pasos para un negocio firme"
+      headingId="metodo-title"
+      intro="No vendemos cursos ni software. Te ayudamos a ganar soberanía sobre tu plata, protegiendo el ingreso de tu familia."
+    />
+
+    <div class="method-layout">
+      <div class="tabs" role="tablist" aria-label="Pilares del método P.A.S.O." (keydown)="onTabKey($event)">
+        @for (pilar of metodo; track pilar.letra; let i = $index) {
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            [id]="'tab-paso-' + i"
+            [attr.aria-selected]="pilarActivo() === i"
+            [attr.aria-controls]="'panel-paso-' + i"
+            [attr.tabindex]="pilarActivo() === i ? 0 : -1"
+            (click)="pilarActivo.set(i)"
+          >
+            <span class="letter">{{ pilar.letra }}</span>
+            <span class="tab-title">{{ pilar.titulo }}</span>
+          </button>
+        }
+      </div>
+
+      @for (pilar of metodo; track pilar.letra; let i = $index) {
+        <div
+          class="panel"
+          role="tabpanel"
+          [id]="'panel-paso-' + i"
+          [attr.aria-labelledby]="'tab-paso-' + i"
+          [hidden]="pilarActivo() !== i"
+          tabindex="0"
+        >
+          <span class="panel-letter" aria-hidden="true">{{ pilar.letra }}</span>
+          <span class="icon-badge icon-badge--sun"><app-icon [name]="pilar.icon" [size]="26" /></span>
+          <h3>{{ pilar.titulo }}</h3>
+          <p class="lead">{{ pilar.resumen }}</p>
+          <ul class="check-list">
+            @for (punto of pilar.puntos; track punto) {
+              <li>{{ punto }}</li>
+            }
+          </ul>
+          <a routerLink="/programa" class="link-arrow">Conoce el programa completo <app-icon name="arrow-right" [size]="18" /></a>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="section" aria-labelledby="como-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Cómo funciona"
+      title="De la libreta al crédito justo, sin salir de tu puesto"
+      headingId="como-title"
+      align="center"
+    />
+    <ol class="steps">
+      @for (paso of pasos; track paso.titulo; let i = $index) {
+        <li class="step" appReveal [revealDelay]="i * 100">
+          <span class="step-num" aria-hidden="true">{{ i + 1 }}</span>
+          <span class="icon-badge"><app-icon [name]="paso.icon" [size]="26" /></span>
+          <h3>{{ paso.titulo }}</h3>
+          <p>{{ paso.texto }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- EN EL TERRITORIO (carrusel de confianza) -->
+<section class="section section--sand" aria-labelledby="territorio-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="En el territorio"
+      title="Así trabajamos: cara a cara, puesto a puesto"
+      headingId="territorio-title"
+      intro="Cada visita es una conversación de confianza en el lugar donde trabajas. Estas son algunas de las personas y los lugares que hacen posible Paso Firme."
+    />
+    <app-photo-carousel [fotos]="fotos" label="Fotos de Paso Firme en el territorio" />
+  </div>
+</section>
+
+<!-- HUMANO + IA -->
+<section class="section section--white" aria-labelledby="ia-title">
+  <div class="container split">
+    <div appReveal>
+      <p class="eyebrow">Phygital: humano + IA</p>
+      <h2 id="ia-title">La IA no reemplaza a nadie: <span class="highlight">el brigadista conversa, la IA anota</span>.</h2>
+      <p class="lead">
+        Decidimos no poner un bot frío frente al comerciante. La confianza se construye cara a cara. La inteligencia artificial
+        trabaja en la sombra para que el brigadista atienda a 4 veces más personas.
+      </p>
+      <p>
+        Con una nota de voz o la foto de un recibo arrugado, nuestro copiloto en WhatsApp ordena tus números en segundos. Un
+        consultor sénior revisa siempre lo que la IA propone antes de que salga cualquier reporte.
+      </p>
+      <a routerLink="/programa" fragment="humano-ia" class="link-arrow">Así repartimos el trabajo <app-icon name="arrow-right" [size]="18" /></a>
+    </div>
+
+    <div class="duo" appReveal [revealDelay]="120">
+      <div class="duo-card duo-card--human">
+        <span class="icon-badge icon-badge--sun"><app-icon name="heart" [size]="26" /></span>
+        <h3>Lo hace una persona</h3>
+        <ul class="check-list">
+          <li>Escucha tus miedos sobre la DIAN y los subsidios</li>
+          <li>Te explica las simulaciones con palabras sencillas</li>
+          <li>Acuerda contigo metas realistas</li>
+          <li>Defiende tu perfil ante la entidad financiera</li>
+        </ul>
+      </div>
+      <div class="duo-card duo-card--ai">
+        <span class="icon-badge"><app-icon name="sparkles" [size]="26" /></span>
+        <h3>Lo acelera la IA</h3>
+        <ul class="check-list">
+          <li>Transcribe tus notas de voz en lenguaje costeño</li>
+          <li>Lee fotos de recibos y cuadernos de fiado</li>
+          <li>Separa gastos de la casa y del negocio</li>
+          <li>Prepara el borrador de tu resumen semanal</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HERRAMIENTAS -->
+<section class="section section--sand" aria-labelledby="herramientas-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Herramientas gratuitas"
+      title="Haz cuentas claras desde tu celular"
+      headingId="herramientas-title"
+      intro="Calculadoras pedagógicas y anónimas: no guardamos lo que escribes."
+    />
+    <div class="grid grid--3">
+      @for (h of herramientas; track h.ruta; let i = $index) {
+        <a class="card card--lift card--link tool" [routerLink]="h.ruta" appReveal [revealDelay]="i * 80">
+          <span class="icon-badge icon-badge--sun"><app-icon [name]="h.icon" [size]="26" /></span>
+          <h3>{{ h.titulo }}</h3>
+          <p>{{ h.texto }}</p>
+          <span class="link-arrow">Usar herramienta <app-icon name="arrow-right" [size]="18" /></span>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCIAS -->
+<section class="section" aria-labelledby="audiencias-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Para quién"
+      title="Un modelo donde ganan todos, y el comerciante no paga"
+      headingId="audiencias-title"
+      intro="Nos sostenemos con comisiones de originación que pagan las microfinancieras y con convenios institucionales. Nunca con el bolsillo del comerciante."
+    />
+    <div class="grid grid--3">
+      @for (a of audiencias; track a.para; let i = $index) {
+        <article class="card audience" appReveal [revealDelay]="i * 80">
+          <span class="icon-badge icon-badge--{{ a.tone }}"><app-icon [name]="a.icon" [size]="26" /></span>
+          <p class="badge badge--navy">{{ a.para }}</p>
+          <h3>{{ a.titulo }}</h3>
+          <p>{{ a.texto }}</p>
+          <ul class="check-list">
+            @for (punto of a.puntos; track punto) {
+              <li>{{ punto }}</li>
+            }
+          </ul>
+          <a [routerLink]="a.ruta" [fragment]="a.fragmento" class="link-arrow">{{ a.cta }} <app-icon name="arrow-right" [size]="18" /></a>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- METAS -->
+<section class="section section--teal" aria-labelledby="metas-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Metas del piloto de 90 días"
+      title="Medimos lo que importa: la vida financiera de las familias"
+      headingId="metas-title"
+    />
+    <div class="grid grid--4">
+      @for (m of metas; track m.texto; let i = $index) {
+        <div class="metric" appReveal [revealDelay]="i * 80">
+          <span class="stat">{{ m.valor }}</span>
+          <p class="stat-label">{{ m.texto }}</p>
+        </div>
+      }
+    </div>
+    <p class="small muted metas-note">
+      Metas del piloto controlado definidas por el equipo fundador; no son resultados alcanzados.
+      <a routerLink="/impacto">Conoce cómo las mediremos</a>.
+    </p>
+  </div>
+</section>
+
+<!-- MITOS -->
+<section class="section" aria-labelledby="mitos-title">
+  <div class="container">
+    <app-section-heading eyebrow="Mitos y realidades" title="Lo que te han dicho vs. lo que es" headingId="mitos-title" />
+    <div class="grid grid--3">
+      @for (m of mitos; track m.mito; let i = $index) {
+        <article class="card myth" appReveal [revealDelay]="i * 80">
+          <p class="myth-label myth-label--no"><app-icon name="x" [size]="16" /> Mito</p>
+          <h3>{{ m.mito }}</h3>
+          <p class="myth-label myth-label--yes"><app-icon name="check" [size]="16" /> Realidad</p>
+          <p>{{ m.realidad }}</p>
+        </article>
+      }
+    </div>
+    <p class="text-center more">
+      <a routerLink="/aprende" class="btn btn--outline">Ver todos los mitos y preguntas frecuentes</a>
+    </p>
+  </div>
+</section>
+
+<app-cta-banner />

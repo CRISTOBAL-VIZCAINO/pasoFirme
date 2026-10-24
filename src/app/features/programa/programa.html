@@ -1,0 +1,156 @@
+<app-page-hero
+  eyebrow="El programa"
+  title="Acompañamiento que llega hasta tu puesto"
+  lead="P.A.S.O. FIRME combina pedagogía contable, acompañamiento en el sitio, simulación tributaria y organización financiera para que tu negocio crezca sin miedo y sin usura."
+  [breadcrumbs]="[{ label: 'El programa' }]"
+>
+  <div class="btn-row">
+    <a routerLink="/inscripcion" class="btn btn--primary">Inscribe tu negocio <app-icon name="arrow-right" [size]="20" /></a>
+    <a routerLink="/programa" fragment="requisitos" class="btn btn--light">¿Quién puede participar?</a>
+  </div>
+</app-page-hero>
+
+<!-- MÉTODO -->
+<section class="section" aria-labelledby="metodo-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Método P.A.S.O."
+      title="Cuatro pilares, un solo objetivo: tu soberanía financiera"
+      headingId="metodo-title"
+      intro="El valor no está en la cartilla ni en el software: está en que conozcas tu ganancia real, protejas el ingreso de tu familia y accedas a crédito justo."
+    />
+    <div class="grid grid--2">
+      @for (p of metodo; track p.letra; let i = $index) {
+        <article class="card pillar" appReveal [revealDelay]="i * 80">
+          <span class="pillar-letter" aria-hidden="true">{{ p.letra }}</span>
+          <span class="icon-badge"><app-icon [name]="p.icon" [size]="26" /></span>
+          <h3>{{ p.titulo }}</h3>
+          <p>{{ p.resumen }}</p>
+          <ul class="check-list">
+            @for (punto of p.puntos; track punto) {
+              <li>{{ punto }}</li>
+            }
+          </ul>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- RUTA 90 DÍAS -->
+<section id="ruta" class="section section--sand" aria-labelledby="ruta-title">
+  <div class="container split split--start">
+    <div class="sticky-intro">
+      <app-section-heading
+        eyebrow="Ruta de acompañamiento"
+        title="90 días para darle paso firme a tu negocio"
+        headingId="ruta-title"
+        intro="Un camino claro, a tu ritmo, sin cerrar tu puesto. Cada etapa tiene un objetivo concreto."
+      />
+      <div class="note note--sun">
+        <app-icon name="clock" [size]="20" />
+        <p>Las sesiones duran unos 15 minutos y se hacen en las horas de menos movimiento de tu puesto.</p>
+      </div>
+    </div>
+    <ol class="timeline">
+      @for (h of ruta; track h.cuando; let i = $index) {
+        <li appReveal [revealDelay]="i * 60">
+          <span class="badge badge--navy">{{ h.cuando }}</span>
+          <h3>{{ h.titulo }}</h3>
+          <p>{{ h.texto }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- HUMANO + IA -->
+<section id="humano-ia" class="section" aria-labelledby="ia-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="Modelo phygital"
+      title="¿Quién hace qué? Personas e inteligencia artificial"
+      headingId="ia-title"
+      intro="Rechazamos la idea de reemplazar a los brigadistas por un chatbot. La IA es un copiloto en la sombra que multiplica el tiempo de las personas, nunca su criterio."
+    />
+    <div class="table-wrap">
+      <table class="table table--stack">
+        <caption class="visually-hidden">Reparto de tareas entre personas e inteligencia artificial</caption>
+        <thead>
+          <tr>
+            <th scope="col">Tarea</th>
+            <th scope="col">¿Quién la hace?</th>
+            <th scope="col">Cómo</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of colaboracion; track f.tarea) {
+            <tr>
+              <td>{{ f.tarea }}</td>
+              <td data-label="¿Quién la hace?">
+                <span
+                  class="badge"
+                  [class.badge--sun]="f.quien === 'Persona'"
+                  [class.badge--navy]="f.quien === 'IA supervisada'"
+                  >{{ f.quien }}</span
+                >
+              </td>
+              <td data-label="Cómo">{{ f.detalle }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid grid--3 safeguards">
+      <div class="card">
+        <span class="icon-badge icon-badge--sun"><app-icon name="eye" [size]="24" /></span>
+        <h3>Supervisión sénior</h3>
+        <p>Un consultor revisa al azar el 20% de los diagnósticos hechos con IA y firma cada perfil de crédito.</p>
+      </div>
+      <div class="card">
+        <span class="icon-badge icon-badge--coral"><app-icon name="alert" [size]="24" /></span>
+        <h3>Derecho a cuestionar a la IA</h3>
+        <p>Todo el equipo tiene el deber de corregir a la IA cuando no entiende la realidad del comercio popular.</p>
+      </div>
+      <div class="card">
+        <span class="icon-badge icon-badge--navy"><app-icon name="graduation" [size]="24" /></span>
+        <h3>Primero se aprende a mano</h3>
+        <p>Cada practicante hace al menos 5 diagnósticos completos sin IA, guiado por un sénior, antes de usar el copiloto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REQUISITOS -->
+<section id="requisitos" class="section section--teal" aria-labelledby="req-title">
+  <div class="container">
+    <div class="split split--start">
+      <div class="card req">
+        <span class="icon-badge"><app-icon name="check-circle" [size]="26" /></span>
+        <h2 id="req-title">¿Quién puede participar?</h2>
+        <ul class="check-list">
+          @for (r of requisitos; track r) {
+            <li>{{ r }}</li>
+          }
+        </ul>
+        <p class="small muted">
+          ¿Tu negocio tiene menos de un año o vendes de forma ambulante? Escríbenos de todas formas: te orientamos hacia otros programas.
+        </p>
+        <a routerLink="/inscripcion" class="btn btn--teal">Quiero inscribirme <app-icon name="arrow-right" [size]="20" /></a>
+      </div>
+      <div class="card req">
+        <span class="icon-badge icon-badge--coral"><app-icon name="shield" [size]="26" /></span>
+        <h2>Lo que nunca hacemos</h2>
+        <ul class="check-list cross-list">
+          @for (n of noHacemos; track n) {
+            <li>{{ n }}</li>
+          }
+        </ul>
+        <p class="small muted">«No venimos a cobrarte ni a fiscalizarte»: es nuestro compromiso con cada comerciante.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-cta-banner />

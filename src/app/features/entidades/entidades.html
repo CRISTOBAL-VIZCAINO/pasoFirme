@@ -1,0 +1,232 @@
+<app-page-hero
+  eyebrow="Para entidades aliadas"
+  title="Inclusión financiera con datos reales y confianza en el territorio"
+  lead="Conectamos a los comerciantes de la economía popular con microfinancieras, programas públicos y universidades, con evidencia levantada puesto a puesto."
+  [breadcrumbs]="[{ label: 'Entidades' }]"
+>
+  <div class="btn-row">
+    <a routerLink="/entidades" fragment="contacto-entidad" class="btn btn--primary">Agendar una conversación <app-icon name="arrow-right" [size]="20" /></a>
+    <a routerLink="/impacto" class="btn btn--light">Ver metas e impacto</a>
+  </div>
+</app-page-hero>
+
+<!-- MICROFINANCIERAS -->
+<section id="microfinancieras" class="section" aria-labelledby="mf-title">
+  <div class="container split">
+    <div>
+      <p class="eyebrow">B2B · Microfinancieras, cooperativas y fintech</p>
+      <h2 id="mf-title">Clientes precalificados, con flujo de caja verificado en campo</h2>
+      <p class="lead">
+        El comerciante informal no es mal pagador: es invisible para los modelos tradicionales. Nosotros lo hacemos visible con datos de su
+        operación diaria.
+      </p>
+      <ul class="check-list">
+        <li><strong>Expedientes de perfil:</strong> ventas, márgenes y constancia de registro de 60 a 90 días.</li>
+        <li><strong>Scoring alternativo:</strong> capacidad de pago ajustada por estacionalidad y validación cualitativa con proveedores y líderes del mercado.</li>
+        <li><strong>Menor costo de adquisición:</strong> originación asistida en el territorio, sin fuerza comercial propia.</li>
+        <li><strong>Alertas tempranas:</strong> si un comerciante deja de registrar por 48 horas, un brigadista verifica en persona.</li>
+      </ul>
+      <div class="model">
+        <div>
+          <span class="model-value">2–3%</span>
+          <span class="small">Comisión de éxito por crédito desembolsado</span>
+        </div>
+        <div>
+          <span class="model-value">API</span>
+          <span class="small">Risk-as-a-Service por suscripción (en desarrollo)</span>
+        </div>
+      </div>
+    </div>
+
+    <figure class="dossier" appReveal aria-labelledby="dossier-caption">
+      <div class="dossier-head">
+        <span class="icon-badge"><app-icon name="file" [size]="22" /></span>
+        <div>
+          <strong>Expediente de perfil financiero</strong>
+          <span class="small muted">Ejemplo ilustrativo</span>
+        </div>
+        <span class="badge">Pre-aprobable</span>
+      </div>
+      <dl class="dossier-grid">
+        <div><dt>Negocio</dt><dd>{{ expediente.negocio }}</dd></div>
+        <div><dt>Ubicación</dt><dd>{{ expediente.zona }}</dd></div>
+        <div><dt>Antigüedad</dt><dd>{{ expediente.antiguedad }}</dd></div>
+        <div><dt>Días con registro</dt><dd>{{ expediente.diasRegistro }} de 90</dd></div>
+        <div><dt>Venta diaria promedio</dt><dd>{{ expediente.ventaPromedio | cop }}</dd></div>
+        <div><dt>Margen real</dt><dd>{{ expediente.margen }}%</dd></div>
+        <div><dt>Cuota diaria sostenible</dt><dd>{{ expediente.cuotaSugerida | cop }}</dd></div>
+        <div><dt>Nivel de riesgo</dt><dd>{{ expediente.riesgo }}</dd></div>
+      </dl>
+      <div class="registro" aria-hidden="true">
+        @for (dia of registroDias; track dia) {
+          <i [class.off]="dia === 7 || dia === 19"></i>
+        }
+      </div>
+      <ul class="dossier-checks">
+        <li><app-icon name="check-circle" [size]="16" /> 2 referencias de proveedores verificadas</li>
+        <li><app-icon name="check-circle" [size]="16" /> Revisado y firmado por consultor sénior</li>
+        <li><app-icon name="check-circle" [size]="16" /> Autorización de datos del comerciante</li>
+      </ul>
+      <figcaption id="dossier-caption" class="small muted">Datos ficticios con fines ilustrativos.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- SECTOR PÚBLICO -->
+<section id="sector-publico" class="section section--sand" aria-labelledby="sp-title">
+  <div class="container">
+    <app-section-heading
+      eyebrow="B2G · Sector público y gremios"
+      title="Fortalecimiento productivo con impacto medible"
+      headingId="sp-title"
+      intro="Para Secretarías de Desarrollo Económico, Gobernación, Cámaras de Comercio y gremios que buscan llegar al comercio popular sin generar rechazo."
+    />
+    <div class="grid grid--3">
+      <article class="card">
+        <span class="icon-badge icon-badge--navy"><app-icon name="map-pin" [size]="24" /></span>
+        <h3>Ejecución en territorio</h3>
+        <p>Brigadas universitarias en el Paseo Bolívar, el Gran Bazar, los mercados y los municipios del área metropolitana, con un modelo de confianza ya diseñado.</p>
+      </article>
+      <article class="card">
+        <span class="icon-badge icon-badge--sun"><app-icon name="trending-up" [size]="24" /></span>
+        <h3>Formalización no traumática</h3>
+        <p>Primero orden de caja y crédito; la formalización tributaria llega como consecuencia voluntaria, sin deserción por miedo.</p>
+      </article>
+      <article class="card">
+        <span class="icon-badge"><app-icon name="chart" [size]="24" /></span>
+        <h3>Indicadores y SROI</h3>
+        <p>Tableros con unidades atendidas, adopción de registros, sustitución de usura y retorno social, con meta de SROI superior a 2,5.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ACADEMIA -->
+<section class="section" aria-labelledby="ac-title">
+  <div class="container split">
+    <div>
+      <p class="eyebrow">Universidades y red NAF</p>
+      <h2 id="ac-title">Práctica profesional con propósito</h2>
+      <p class="lead">
+        Los estudiantes de Contaduría y Administración validan sus prácticas acompañando negocios reales, con mentoría sénior y uso
+        responsable de inteligencia artificial.
+      </p>
+      <ul class="check-list">
+        <li>Mentoría en parejas: júnior con sénior, y primero a mano, luego con IA.</li>
+        <li>Auditorías aleatorias de criterio sobre el 20% de los diagnósticos.</li>
+        <li>Investigación aplicada sobre economía popular y finanzas inclusivas.</li>
+      </ul>
+    </div>
+    <div class="card ecosystem">
+      <h3>Ecosistema con el que buscamos articularnos</h3>
+      <ul class="eco-list">
+        @for (g of ecosistema; track g.categoria) {
+          <li>
+            <span class="icon-badge icon-badge--navy"><app-icon [name]="g.icon" [size]="20" /></span>
+            <div>
+              <strong>{{ g.categoria }}</strong>
+              <span class="small muted">{{ g.actores.join(' · ') }}</span>
+            </div>
+          </li>
+        }
+      </ul>
+      <p class="small muted">La mención de una institución no implica un convenio firmado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FORMULARIO -->
+<section id="contacto-entidad" class="section section--navy" aria-labelledby="form-title">
+  <div class="container split split--start">
+    <div>
+      <p class="eyebrow">Hablemos</p>
+      <h2 id="form-title">Construyamos juntos un piloto</h2>
+      <p class="lead">
+        Estamos preparando un piloto controlado de 90 días con hasta 50 micronegocios en el Paseo Bolívar o el Gran Bazar. Buscamos aliados
+        financieros, institucionales y académicos.
+      </p>
+      <ul class="check-list">
+        <li>Validar el scoring alternativo con al menos 2 entidades financieras.</li>
+        <li>Medir la adopción del registro por WhatsApp durante 8 semanas.</li>
+        <li>Medir la precisión de la lectura de voz y fotos en campo.</li>
+      </ul>
+    </div>
+
+    @if (enviada(); as s) {
+      <div class="card form-card" role="status">
+        <span class="icon-badge icon-badge--sun"><app-icon name="check-circle" [size]="28" /></span>
+        <h3>¡Gracias por escribirnos!</h3>
+        <p>Recibimos tu mensaje con el radicado <strong>{{ s.radicado }}</strong>. El equipo te responderá por correo.</p>
+        <p class="small muted">Versión de demostración: el mensaje se guardó solo en este navegador.</p>
+      </div>
+    } @else {
+      <form class="card form-card" [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="org">Organización</label>
+            <input id="org" class="input" formControlName="organizacion" autocomplete="organization" [attr.aria-invalid]="invalido('organizacion')" />
+            @if (invalido('organizacion')) {
+              <p class="error">Escribe el nombre de la organización.</p>
+            }
+          </div>
+          <div class="field">
+            <label class="label" for="tipoE">Tipo de entidad</label>
+            <select id="tipoE" class="select" formControlName="tipo" [attr.aria-invalid]="invalido('tipo')">
+              <option value="" disabled>Selecciona…</option>
+              @for (t of tiposEntidad; track t) {
+                <option [value]="t">{{ t }}</option>
+              }
+            </select>
+            @if (invalido('tipo')) {
+              <p class="error">Selecciona el tipo de entidad.</p>
+            }
+          </div>
+          <div class="field">
+            <label class="label" for="nombreE">Tu nombre</label>
+            <input id="nombreE" class="input" formControlName="nombre" autocomplete="name" [attr.aria-invalid]="invalido('nombre')" />
+            @if (invalido('nombre')) {
+              <p class="error">Escribe tu nombre.</p>
+            }
+          </div>
+          <div class="field">
+            <label class="label" for="cargo">Cargo <span class="label-hint">(opcional)</span></label>
+            <input id="cargo" class="input" formControlName="cargo" autocomplete="organization-title" />
+          </div>
+          <div class="field">
+            <label class="label" for="correo">Correo institucional</label>
+            <input id="correo" class="input" type="email" formControlName="correo" autocomplete="email" [attr.aria-invalid]="invalido('correo')" />
+            @if (invalido('correo')) {
+              <p class="error">Escribe un correo válido.</p>
+            }
+          </div>
+          <div class="field">
+            <label class="label" for="tel">Teléfono <span class="label-hint">(opcional)</span></label>
+            <input id="tel" class="input" type="tel" formControlName="telefono" autocomplete="tel" [attr.aria-invalid]="invalido('telefono')" />
+            @if (invalido('telefono')) {
+              <p class="error">Revisa el número.</p>
+            }
+          </div>
+          <div class="field field--full">
+            <label class="label" for="msg">¿Cómo te gustaría colaborar?</label>
+            <textarea id="msg" class="textarea" formControlName="mensaje" [attr.aria-invalid]="invalido('mensaje')"></textarea>
+            @if (invalido('mensaje')) {
+              <p class="error">Cuéntanos un poco más (mínimo 10 caracteres).</p>
+            }
+          </div>
+          <div class="field field--full">
+            <label class="checkbox">
+              <input type="checkbox" formControlName="autorizacion" [attr.aria-invalid]="invalido('autorizacion')" />
+              <span>Autorizo el tratamiento de mis datos según la <a routerLink="/privacidad">política de datos personales</a>.</span>
+            </label>
+            @if (invalido('autorizacion')) {
+              <p class="error">Necesitamos tu autorización para responderte.</p>
+            }
+          </div>
+        </div>
+        <button type="submit" class="btn btn--primary submit" [disabled]="enviando()">
+          {{ enviando() ? 'Enviando…' : 'Enviar mensaje' }}
+        </button>
+      </form>
+    }
+  </div>
+</section>

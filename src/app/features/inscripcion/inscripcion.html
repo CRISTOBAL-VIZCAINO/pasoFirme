@@ -1,0 +1,205 @@
+<app-page-hero
+  eyebrow="Inscripción gratuita"
+  title="Inscribe tu negocio"
+  lead="Déjanos tus datos y un brigadista de Paso Firme te contactará para visitarte en tu puesto, en el horario que prefieras."
+  [breadcrumbs]="[{ label: 'Inscripción' }]"
+/>
+
+<section class="section">
+  <div class="container layout">
+    @if (enviada(); as s) {
+      <div class="card success" role="status" tabindex="-1">
+        <span class="icon-badge icon-badge--sun big"><app-icon name="check-circle" [size]="34" /></span>
+        <h2>¡Listo! Tu negocio quedó inscrito</h2>
+        <p class="lead">Un brigadista te contactará en los próximos días para acordar la visita.</p>
+        <p class="radicado">Número de radicado: <strong>{{ s.radicado }}</strong></p>
+        <div class="note">
+          <app-icon name="info" [size]="20" />
+          <p>
+            Versión de demostración: esta inscripción se guardó únicamente en este navegador. Cuando la plataforma esté conectada, llegará
+            directamente al equipo de Paso Firme.
+          </p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn--teal" [href]="whatsapp" target="_blank" rel="noopener"><app-icon name="chat" [size]="20" /> Avísanos por WhatsApp</a>
+          <a class="btn btn--outline" routerLink="/herramientas">Mientras tanto, usa las herramientas</a>
+          <button type="button" class="btn btn--outline" (click)="nuevaInscripcion()">Inscribir otro negocio</button>
+        </div>
+      </div>
+    } @else {
+      <form class="card form" [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+        <fieldset>
+          <legend><h2>1. Tus datos</h2></legend>
+          <div class="form-grid">
+            <div class="field">
+              <label class="label" for="nombre">Nombre completo</label>
+              <input
+                id="nombre"
+                class="input"
+                formControlName="nombre"
+                autocomplete="name"
+                [attr.aria-invalid]="invalido('nombre')"
+                aria-describedby="nombre-err"
+              />
+              @if (invalido('nombre')) {
+                <p id="nombre-err" class="error">Escribe tu nombre (mínimo 3 letras).</p>
+              }
+            </div>
+            <div class="field">
+              <label class="label" for="celular">Celular <span class="label-hint">(10 dígitos)</span></label>
+              <input
+                id="celular"
+                class="input"
+                type="tel"
+                inputmode="numeric"
+                maxlength="10"
+                autocomplete="tel-national"
+                placeholder="3001234567"
+                formControlName="celular"
+                [attr.aria-invalid]="invalido('celular')"
+                aria-describedby="celular-err"
+              />
+              @if (invalido('celular')) {
+                <p id="celular-err" class="error">Escribe un celular colombiano de 10 dígitos que empiece por 3.</p>
+              }
+            </div>
+            <fieldset class="field field--full choice-group">
+              <legend class="label">¿Cómo prefieres que te contactemos?</legend>
+              <label class="choice"><input type="radio" formControlName="contacto" value="whatsapp" /><span>WhatsApp</span></label>
+              <label class="choice"><input type="radio" formControlName="contacto" value="llamada" /><span>Llamada</span></label>
+              <label class="choice"><input type="radio" formControlName="contacto" value="visita" /><span>Que me visiten directamente</span></label>
+            </fieldset>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><h2>2. Tu negocio</h2></legend>
+          <div class="form-grid">
+            <div class="field">
+              <label class="label" for="municipio">Municipio</label>
+              <select id="municipio" class="select" formControlName="municipio" [attr.aria-invalid]="invalido('municipio')" aria-describedby="municipio-err">
+                <option value="" disabled>Selecciona…</option>
+                @for (m of municipios; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+              @if (invalido('municipio')) {
+                <p id="municipio-err" class="error">Selecciona tu municipio.</p>
+              }
+            </div>
+            <div class="field">
+              <label class="label" for="zona">Zona o mercado</label>
+              <select id="zona" class="select" formControlName="zona" [attr.aria-invalid]="invalido('zona')" aria-describedby="zona-err">
+                <option value="" disabled>Selecciona…</option>
+                @for (z of zonas; track z) {
+                  <option [value]="z">{{ z }}</option>
+                }
+              </select>
+              @if (invalido('zona')) {
+                <p id="zona-err" class="error">Selecciona la zona donde vendes.</p>
+              }
+            </div>
+            <div class="field">
+              <label class="label" for="tipo">Tipo de negocio</label>
+              <select id="tipo" class="select" formControlName="tipoNegocio" [attr.aria-invalid]="invalido('tipoNegocio')" aria-describedby="tipo-err">
+                <option value="" disabled>Selecciona…</option>
+                @for (t of tiposNegocio; track t) {
+                  <option [value]="t">{{ t }}</option>
+                }
+              </select>
+              @if (invalido('tipoNegocio')) {
+                <p id="tipo-err" class="error">Selecciona el tipo de negocio.</p>
+              }
+            </div>
+            <div class="field">
+              <label class="label" for="actividad">¿Qué vendes?</label>
+              <input
+                id="actividad"
+                class="input"
+                placeholder="Ej.: jugos y frutas, ropa, misceláneas"
+                formControlName="actividad"
+                [attr.aria-invalid]="invalido('actividad')"
+                aria-describedby="actividad-err"
+              />
+              @if (invalido('actividad')) {
+                <p id="actividad-err" class="error">Cuéntanos brevemente qué vendes.</p>
+              }
+            </div>
+            <fieldset class="field field--full choice-group" [attr.aria-invalid]="invalido('antiguedad')">
+              <legend class="label">¿Cuánto tiempo llevas con tu negocio?</legend>
+              <label class="choice"><input type="radio" formControlName="antiguedad" value="menos-1" /><span>Menos de 1 año</span></label>
+              <label class="choice"><input type="radio" formControlName="antiguedad" value="1-3" /><span>De 1 a 3 años</span></label>
+              <label class="choice"><input type="radio" formControlName="antiguedad" value="mas-3" /><span>Más de 3 años</span></label>
+              @if (invalido('antiguedad')) {
+                <p class="error field--full">Selecciona una opción.</p>
+              }
+              @if (antiguedad() === 'menos-1') {
+                <div class="note note--sun field--full">
+                  <app-icon name="info" [size]="20" />
+                  <p>El piloto prioriza negocios con al menos un año de operación, pero inscríbete igual: te orientaremos hacia otros programas.</p>
+                </div>
+              }
+            </fieldset>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><h2>3. ¿En qué te podemos ayudar?</h2></legend>
+          <div class="checks" formGroupName="necesidades">
+            @for (n of necesidadesOpciones; track n.key) {
+              <label class="checkbox"><input type="checkbox" [formControlName]="n.key" /> {{ n.texto }}</label>
+            }
+          </div>
+          @if (invalido('necesidades')) {
+            <p class="error">Elige al menos una opción.</p>
+          }
+
+          <fieldset class="choice-group horario">
+            <legend class="label">¿A qué hora te queda mejor la visita?</legend>
+            <label class="choice"><input type="radio" formControlName="horario" value="manana" /><span>En la mañana</span></label>
+            <label class="choice"><input type="radio" formControlName="horario" value="tarde" /><span>En la tarde</span></label>
+            <label class="choice"><input type="radio" formControlName="horario" value="cualquiera" /><span>Cuando haya menos clientes</span></label>
+          </fieldset>
+        </fieldset>
+
+        <div class="consent">
+          <label class="checkbox">
+            <input type="checkbox" formControlName="autorizacion" [attr.aria-invalid]="invalido('autorizacion')" />
+            <span>
+              Autorizo a Paso Firme a tratar mis datos personales para contactarme y acompañar mi negocio, según la
+              <a routerLink="/privacidad" target="_blank">política de tratamiento de datos</a> (Ley 1581 de 2012). Mis datos no se compartirán
+              con entidades financieras sin mi autorización expresa.
+            </span>
+          </label>
+          @if (invalido('autorizacion')) {
+            <p class="error">Necesitamos tu autorización para poder contactarte.</p>
+          }
+        </div>
+
+        <button type="submit" class="btn btn--primary submit" [disabled]="enviando()">
+          @if (enviando()) {
+            Enviando…
+          } @else {
+            Inscribir mi negocio
+            <app-icon name="arrow-right" [size]="20" />
+          }
+        </button>
+      </form>
+    }
+
+    <aside class="side">
+      <div class="card">
+        <h2 class="side-title">Qué pasa después</h2>
+        <ol class="next">
+          <li><strong>Te contactamos</strong> por el medio que elegiste para acordar la visita.</li>
+          <li><strong>Te visitamos</strong> en tu puesto, en horas de poco movimiento.</li>
+          <li><strong>Empiezas tu ruta</strong> de 90 días con tu Cartilla de Caja Diaria.</li>
+        </ol>
+      </div>
+      <div class="card promise">
+        <app-icon name="lock" [size]="22" />
+        <p><strong>Sin costo, sin fiscalización.</strong> Paso Firme no le cobra al comerciante y no comparte información con la DIAN ni la Alcaldía.</p>
+      </div>
+    </aside>
+  </div>
+</section>

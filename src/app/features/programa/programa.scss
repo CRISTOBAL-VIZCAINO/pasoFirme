@@ -1,0 +1,78 @@
+.pillar {
+  position: relative;
+  overflow: hidden;
+}
+
+.pillar-letter {
+  position: absolute;
+  right: 12px;
+  top: -18px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 8rem;
+  line-height: 1;
+  color: var(--sand-100);
+  pointer-events: none;
+}
+
+.pillar > :not(.pillar-letter) {
+  position: relative;
+}
+
+.sticky-intro {
+  @media (min-width: 960px) {
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+  }
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--space-6);
+  border-left: 3px solid var(--sand-200);
+
+  li {
+    position: relative;
+    padding-bottom: var(--space-6);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: calc(-1 * var(--space-6) - 10px);
+      top: 2px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--sun-500);
+      border: 3px solid var(--sand-100);
+      box-shadow: 0 0 0 2px var(--sun-500);
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+
+      &::before {
+        background: var(--teal-600);
+        box-shadow: 0 0 0 2px var(--teal-600);
+      }
+    }
+  }
+
+  h3 {
+    margin: var(--space-2) 0 var(--space-2);
+  }
+
+  p {
+    margin: 0;
+    color: var(--ink-700);
+  }
+}
+
+.safeguards {
+  margin-top: var(--space-6);
+}
+
+.req h2 {
+  font-size: var(--fs-xl);
+}
