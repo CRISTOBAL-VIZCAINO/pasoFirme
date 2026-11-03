@@ -1,8 +1,8 @@
 <div class="carousel" role="region" aria-roledescription="carrusel" [attr.aria-label]="label()">
   <ul class="track" #track tabindex="0" (scroll)="onScroll()" aria-live="off">
     @for (foto of fotos(); track foto.src; let i = $index) {
-      <li class="slide" role="group" aria-roledescription="foto" [attr.aria-label]="i + 1 + ' de ' + fotos().length">
-        <figure>
+      <li class="slide">
+        <figure role="group" aria-roledescription="foto" [attr.aria-label]="i + 1 + ' de ' + fotos().length">
           <div class="frame">
             @if (!faltantes().has(i)) {
               <img [src]="foto.src" [alt]="foto.alt" loading="lazy" decoding="async" (error)="marcarFaltante(i)" />

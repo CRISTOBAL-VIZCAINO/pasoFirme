@@ -42,13 +42,47 @@ await send('Page.enable'); await send('Runtime.enable'); await send('Log.enable'
 await send('Page.addScriptToEvaluateOnNewDocument', { source: `
   window.__calls = [];
   const original = window.fetch.bind(window);
+  const dash = { kpis: { visitantes_unicos: 120, sesiones: 150, paginas_vistas: 480, inscritos: 6, inscritos_total: 31, formularios_iniciados: 14, herramientas_completadas: 22, clics_whatsapp: 9 },
+    embudo: { visitaron: 120, vieron_inscripcion: 40, iniciaron_form: 14, enviaron_form: 6 },
+    por_dia: [{ dia: '2026-11-01', visitantes: 10, vistas: 30, inscritos: 1 }, { dia: '2026-11-02', visitantes: 0, vistas: 0, inscritos: 0 }, { dia: '2026-11-03', visitantes: 25, vistas: 70, inscritos: 3 }],
+    modulos: [{ modulo: 'Inicio', vistas: 200, visitantes: 110, seg_prom: 75 }, { modulo: 'Inscripción', vistas: 60, visitantes: 40, seg_prom: 32 }],
+    fuentes: [{ fuente: 'paseo-bolivar', visitantes: 60 }, { fuente: 'directo', visitantes: 50 }], dispositivos: [{ dispositivo: 'móvil', visitantes: 100 }],
+    ubicaciones: [{ ciudad: 'Barranquilla', departamento: 'Atlántico', visitantes: 90 }],
+    herramientas: [{ herramienta: 'caja-diaria', iniciadas: 30, completadas: 22 }], ctas: [{ cta: 'inscribete_hero', clics: 25 }] };
+  const ins = [{ id: '11111111-1111-4111-8111-111111111111', created_at: '2026-11-03T15:00:00Z', nombre: 'Marta Pérez', celular: '3001234567', canal_contacto: 'whatsapp', municipio: 'Barranquilla', zona: 'Paseo Bolívar', tipo_negocio: 'Puesto fijo', actividad: 'Frutas', antiguedad: 'mas-3', necesidades: ['Salir del gota a gota'], horario: 'manana', estado: 'nuevo', notas: null, utm_source: 'paseo-bolivar', utm_medium: null, utm_campaign: null, referrer: null, visitor_id: '22222222-2222-4222-8222-222222222222' },
+    { id: '33333333-3333-4333-8333-333333333333', created_at: '2026-11-02T15:00:00Z', nombre: 'Luis Ortega', celular: '3109876543', canal_contacto: 'llamada', municipio: null, zona: 'Soledad', tipo_negocio: null, actividad: null, antiguedad: null, necesidades: [], horario: null, estado: 'contactado', notas: null, utm_source: null, utm_medium: null, utm_campaign: null, referrer: null, visitor_id: null }];
+  const json = (cuerpo, status = 200, tipo = 'application/json') => new Response(typeof cuerpo === 'string' ? cuerpo : JSON.stringify(cuerpo), { status, headers: { 'content-type': tipo } });
   window.fetch = (u, o) => {
     const url = String(u);
     if (!url.includes('/.netlify/functions/')) return original(u, o);
-    const nombre = url.split('/').pop();
-    window.__calls.push({ nombre, body: typeof o?.body === 'string' ? o.body : null });
-    const cuerpo = nombre === 'conteo' ? { total: 25 } : { ok: true };
-    return new Promise((r) => setTimeout(() => r(new Response(JSON.stringify(cuerpo), { status: nombre === 'inscripcion' ? 201 : 200, headers: { 'content-type': 'application/json' } })), nombre === 'inscripcion' ? 700 : 0));
+    const parsed = new URL(url, location.origin);
+    const nombre = parsed.pathname.split('/').pop();
+    const auth = (o && o.headers && o.headers.authorization) || '';
+    window.__calls.push({ nombre, url, metodo: (o && o.method) || 'GET', auth, body: typeof (o && o.body) === 'string' ? o.body : null });
+    const respuesta = (() => {
+      if (nombre === 'conteo') return json({ total: 25 });
+      if (nombre === 'admin-login') {
+        const pw = JSON.parse(o.body).password;
+        if (pw === 'clave-correcta-123') return json({ ok: true, token: 'tok' });
+        if (pw === 'bloqueada') return json({ ok: false, error: 'Demasiados intentos. Espera 15 minutos.' }, 429);
+        return json({ ok: false, error: 'Contraseña incorrecta.' }, 401);
+      }
+      if (nombre.startsWith('admin-')) {
+        if (auth !== 'Bearer tok') return json({ error: 'No autorizado' }, 401);
+        if (nombre === 'admin-dashboard') return json(dash);
+        if (nombre === 'admin-inscripciones') {
+          if (o.method === 'PATCH' || o.method === 'DELETE') return json({ ok: true });
+          if (parsed.searchParams.get('formato') === 'csv') return json('nombre,celular\\r\\nMarta,3001234567', 200, 'text/csv');
+          return json({ total: 2, devueltos: 2, items: ins });
+        }
+        if (nombre === 'admin-visitantes') {
+          if (parsed.searchParams.get('id')) return json({ visitante: { visitor_id: parsed.searchParams.get('id'), primera_visita: '2026-11-03T14:00:00Z', ultima_visita: '2026-11-03T15:00:00Z', utm_source: 'paseo-bolivar', ciudad: 'Barranquilla', departamento: 'Atlántico', dispositivo: 'móvil', navegador: 'Chrome', sistema: 'Android' }, inscripcion: null, eventos: [{ created_at: '2026-11-03T14:00:00Z', tipo: 'page_view', ruta: '/', modulo: 'Inicio', detalle: {}, duracion_ms: null }, { created_at: '2026-11-03T14:01:00Z', tipo: 'tool_complete', ruta: '/herramientas/caja-diaria', modulo: 'Caja', detalle: { tool: 'caja-diaria', resultado: 'verde' }, duracion_ms: null }] });
+          return json({ items: [{ visitor_id: '22222222-2222-4222-8222-222222222222', primera_visita: '2026-11-03T14:00:00Z', ultima_visita: '2026-11-03T15:00:00Z', paginas: 4, ciudad: 'Barranquilla', departamento: 'Atlántico', pais: 'CO', dispositivo: 'móvil', navegador: 'Chrome', fuente: 'paseo-bolivar', inscrito: true, nombre_inscrito: 'Marta Pérez' }, { visitor_id: '44444444-4444-4444-8444-444444444444', primera_visita: '2026-11-02T14:00:00Z', ultima_visita: '2026-11-02T15:00:00Z', paginas: 1, ciudad: null, departamento: null, pais: 'CO', dispositivo: 'escritorio', navegador: 'Firefox', fuente: null, inscrito: false, nombre_inscrito: null }], limit: 50, offset: 0 });
+        }
+      }
+      return json({ ok: true }, nombre === 'inscripcion' ? 201 : 200);
+    })();
+    return new Promise((r) => setTimeout(() => r(respuesta), nombre === 'inscripcion' ? 700 : 0));
   };
   navigator.sendBeacon = (u) => { window.__calls.push({ nombre: String(u).split('/').pop(), beacon: true, body: null }); return true; };
 ` });
@@ -368,6 +402,75 @@ await send('Page.navigate', { url: BASE + '/programa?interno=1' }); await waitFo
 await click('header a[href="/aprende"]'); await waitFor('location.pathname === "/aprende"'); await sleep(2200);
 check('Con ?interno=1 no se registra ninguna visita', (await ev(`window.__calls.filter(c => c.nombre === 'track').length`)) === 0);
 await send('Page.navigate', { url: BASE + '/?interno=0' }); await waitFor('document.querySelector("main h1")', 8000); await sleep(500);
+
+// ─────────────────────────── 9c. Panel /admin ───────────────────────────
+console.log('\n## 9c. Panel administrativo /admin');
+const esperarAdmin = (expr, ms = 4000) => waitFor(expr, ms);
+await send('Page.navigate', { url: BASE + '/admin/panel' });
+await esperarAdmin('document.querySelector("app-admin-login")');
+check('Sin sesión, /admin/panel redirige al login', (await ev('location.pathname')) === '/admin');
+check('El login pide una contraseña y no muestra el menú ni el pie del sitio', (await ev(`!!document.querySelector('#pw[type=password]') && !document.querySelector('app-header') && !document.querySelector('app-footer') && !document.querySelector('.fab')`)));
+check('El login lleva noindex y el título «Panel · Paso Firme»', (await ev(`document.querySelector('meta[name=robots]')?.content`)) === 'noindex,nofollow' && (await ev('document.title')) === 'Panel · Paso Firme');
+await setVal('#pw', 'equivocada'); await click('form button[type=submit]'); await esperarAdmin(`!!document.querySelector('.error')`);
+check('Contraseña incorrecta: mensaje claro y no entra', (await txt('.error')) === 'Contraseña incorrecta.' && (await ev('location.pathname')) === '/admin');
+await setVal('#pw', 'bloqueada'); await click('form button[type=submit]'); await sleep(400);
+check('Demasiados intentos (429): «espera 15 minutos»', (await txt('.error')).includes('15 minutos'));
+await setVal('#pw', 'clave-correcta-123'); await click('form button[type=submit]');
+await esperarAdmin(`!!document.querySelector('.kpis .kpi')`);
+check('Contraseña correcta: entra al panel con el token solo en sessionStorage', (await ev('location.pathname')) === '/admin/panel' && (await ev(`sessionStorage.getItem('pf_admin')`)) === 'tok' && (await ev(`localStorage.getItem('pf_admin')`)) === null);
+check('Resumen: 8 KPIs + conversión', (await ev(`document.querySelectorAll('.kpis .kpi').length`)) === 9 && (await txt('.kpi--conv .kpi-v')) === '5,0 %', await txt('.kpi--conv .kpi-v'));
+check('Resumen: KPI de visitantes únicos con separador de miles (120)', (await txt('.kpis .kpi .kpi-v')) === '120');
+check('Resumen: gráfico por día con barras de visitantes e inscritos', (await ev(`document.querySelectorAll('.grafico .col').length`)) === 3);
+check('Resumen: embudo de 4 pasos con % de caída', (await ev(`document.querySelectorAll('.embudo li').length`)) === 4 && (await txt('.embudo')).includes('Se pierde el 67 %'));
+check('Resumen: módulos con tiempo promedio («1 min 15 s»)', (await txt('app-tab-resumen')).includes('1 min 15 s') && (await txt('app-tab-resumen')).includes('Inscripción'));
+const llamada = await ev(`window.__calls.filter(c => c.nombre === 'admin-dashboard').pop()?.url`);
+check('El rango se envía en ISO con offset de Bogotá (-05:00) y hasta exclusivo', /desde=\d{4}-\d{2}-\d{2}T00%3A00%3A00-05%3A00/.test(llamada) && /hasta=\d{4}-\d{2}-\d{2}T00%3A00%3A00-05%3A00/.test(llamada), llamada);
+check('Las llamadas del panel llevan el token Bearer', (await ev(`window.__calls.filter(c => c.nombre === 'admin-dashboard').every(c => c.auth === 'Bearer tok')`)));
+await click('.adm-rango button:nth-child(1)'); await sleep(300);
+const hoyUrl = await ev(`window.__calls.filter(c => c.nombre === 'admin-dashboard').pop().url`);
+const dh = decodeURIComponent(hoyUrl).match(/desde=([^&]+)&hasta=([^&]+)/);
+check('«Hoy» pide de medianoche a medianoche siguiente', !!dh && Date.parse(dh[2]) - Date.parse(dh[1]) === 86400000, hoyUrl);
+check('Muestra la última actualización en hora de Bogotá', /\d{1,2}:\d{2}/.test(await txt('.adm-meta')));
+await click('#tab-audiencia'); await sleep(200);
+check('Audiencia: fuentes, dispositivos y ciudades', (await txt('app-tab-audiencia')).includes('paseo-bolivar') && (await txt('app-tab-audiencia')).includes('móvil') && (await txt('app-tab-audiencia')).includes('Barranquilla, Atlántico'));
+await click('#tab-inscritos'); await esperarAdmin(`document.querySelectorAll('app-tab-inscritos tbody tr').length === 2`);
+check('Inscritos: tabla con 2 filas y enlace de WhatsApp (+57)', (await ev(`document.querySelectorAll('app-tab-inscritos tbody tr').length`)) === 2 && (await ev(`!!document.querySelector('app-tab-inscritos a[href="https://wa.me/573001234567"]')`)));
+await ev(`(() => { const sel = document.querySelector('#est-11111111-1111-4111-8111-111111111111'); sel.value = 'contactado'; sel.dispatchEvent(new Event('change', { bubbles: true })); })()`); await sleep(300);
+const patch = await ev(`JSON.parse(window.__calls.filter(c => c.nombre === 'admin-inscripciones' && c.metodo === 'PATCH').pop().body)`);
+check('Cambiar el estado envía PATCH con id y estado', patch.estado === 'contactado' && patch.id.startsWith('1111'));
+await click('app-tab-inscritos .enlace'); await esperarAdmin(`!!document.querySelector('.cajon')`);
+check('Detalle: muestra los datos y la línea de tiempo de navegación', (await txt('.cajon')).includes('Salir del gota a gota') && await esperarAdmin(`document.querySelectorAll('.cajon .linea li').length === 2`));
+check('La línea de tiempo describe lo que hizo (herramienta y resultado)', (await txt('.cajon .linea')).includes('Terminó la herramienta «caja-diaria» (resultado verde)'));
+await setVal('#notas', 'Llamar el lunes'); await click('.cajon .btn--primary'); await sleep(300);
+const notas = await ev(`JSON.parse(window.__calls.filter(c => c.nombre === 'admin-inscripciones' && c.metodo === 'PATCH').pop().body)`);
+check('Guardar notas envía PATCH con las notas', notas.notas === 'Llamar el lunes');
+check('Eliminar exige escribir el nombre exacto', await ev(`document.querySelector('.cajon .btn--danger').disabled`));
+await setVal('#conf', 'Marta Pérez'); await sleep(100);
+check('…y se habilita al escribirlo', !(await ev(`document.querySelector('.cajon .btn--danger').disabled`)));
+await click('.cajon .btn--danger'); await sleep(400);
+check('Eliminar envía DELETE con el id y cierra el detalle', (await ev(`window.__calls.filter(c => c.nombre === 'admin-inscripciones' && c.metodo === 'DELETE').pop().url`)).includes('id=11111111') && !(await ev(`!!document.querySelector('.cajon')`)));
+await click('app-tab-inscritos .herramientas-barra button'); await sleep(400);
+check('Exportar CSV pide formato=csv con el token', await ev(`window.__calls.some(c => c.nombre === 'admin-inscripciones' && c.url.includes('formato=csv') && c.auth === 'Bearer tok')`));
+await click('#tab-visitantes'); await esperarAdmin(`document.querySelectorAll('app-tab-visitantes tbody tr').length === 2`);
+check('Visitantes: tabla, insignia «Inscrito: Marta Pérez» y aclaración', (await txt('app-tab-visitantes')).includes('Inscrito: Marta Pérez') && (await txt('app-tab-visitantes')).includes('Un visitante es un navegador'));
+await click('app-tab-visitantes .enlace'); await esperarAdmin(`document.querySelectorAll('.cajon .linea li').length === 2`);
+check('Visitantes: el detalle abre su línea de tiempo', (await txt('.cajon .linea')).includes('Entró a «Inicio»'));
+await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+await click('.cajon .cerrar'); await sleep(200);
+check('Rango personalizado muestra las fechas y el panel no se mide en la analítica', (await ev(`window.__calls.filter(c => c.nombre === 'track').length`)) === 0);
+await click('.adm-acciones button:last-child'); await esperarAdmin(`!!document.querySelector('app-admin-login')`);
+check('Cerrar sesión vuelve al login y borra el token', (await ev('location.pathname')) === '/admin' && (await ev(`sessionStorage.getItem('pf_admin')`)) === null);
+// Token vencido o inválido → 401 → cierra sesión
+await ev(`sessionStorage.setItem('pf_admin', 'viejo')`);
+await send('Page.navigate', { url: BASE + '/admin/panel' }); await sleep(1200);
+check('Una respuesta 401 cierra la sesión y vuelve al login', (await ev('location.pathname')) === '/admin' && (await ev(`sessionStorage.getItem('pf_admin')`)) === null);
+// El código del panel no viaja en el paquete inicial
+const { readdirSync, readFileSync } = await import('node:fs');
+const dirDist = 'dist/paso-firme-web/browser';
+const principal = readdirSync(dirDist).find((f) => /^main-.*\.js$/.test(f));
+const codigoPrincipal = readFileSync(`${dirDist}/${principal}`, 'utf8');
+check('El paquete inicial no contiene el código del panel (carga diferida)', !codigoPrincipal.includes('admin-dashboard') && !codigoPrincipal.includes('admin-login'));
+check('Ningún secreto en el paquete público', !/service_role|ADMIN_PASSWORD|ADMIN_TOKEN_SECRET/i.test(codigoPrincipal));
 
 // ─────────────────────────── 10. Formulario de entidades ───────────────────────────
 console.log('\n## 10. Formulario de entidades');

@@ -12,9 +12,11 @@ function normalizarCelular(v: unknown): string | null {
 export default async (req: Request, context: Context) => {
   if (req.method !== "POST") return json({ ok: false, error: "Método no permitido" }, 405);
 
+  const raw = await req.text();
+  if (raw.length > 20_000) return json({ ok: false, error: "Solicitud demasiado grande" }, 413);
   let b: any;
   try {
-    b = await req.json();
+    b = JSON.parse(raw);
   } catch {
     return json({ ok: false, error: "JSON inválido" }, 400);
   }
