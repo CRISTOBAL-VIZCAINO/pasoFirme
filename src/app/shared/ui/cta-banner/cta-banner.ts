@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 
 import { PfTrackDirective } from '../../../core/pf-track.directive';
 import { TrackingService } from '../../../core/tracking.service';
-import { whatsappUrl } from '../../../data/site.config';
+import { whatsappUrl } from '../../../core/contacto';
 import { Icon } from '../icon/icon';
 
 @Component({

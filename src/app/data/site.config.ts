@@ -1,6 +1,5 @@
 /**
  * Datos generales del sitio.
- * TODO: el número de WhatsApp es un marcador de posición: reemplázalo por el oficial antes de publicar.
  * TODO: `correo` queda vacío hasta tener uno real; mientras tanto el sitio no lo muestra.
  */
 export const SITE = {
@@ -8,15 +7,10 @@ export const SITE = {
   sigla: 'P.A.S.O. FIRME',
   lema: 'Tu negocio, con paso firme',
   mtp: 'Transformar la información del comercio popular en dignidad financiera, acceso justo al crédito y crecimiento sostenible para las familias del Atlántico.',
-  whatsapp: '570000000000',
   correo: '',
   ubicacion: 'Barranquilla, Atlántico · Colombia',
   instituciones: 'Universidad Andrés Bello (UNAB) · Corporación Universitaria Minuto de Dios (UNIMINUTO)',
 } as const;
-
-export function whatsappUrl(mensaje: string): string {
-  return `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(mensaje)}`;
-}
 
 export interface NavItem {
   label: string;

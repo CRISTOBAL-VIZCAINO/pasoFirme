@@ -58,7 +58,8 @@ Cada comerciante que aparezca debe firmar una autorización de uso de imagen.
 
 ## Antes de publicar
 
-- Reemplazar el WhatsApp y el correo de marcador en `src/app/data/site.config.ts`.
+- El WhatsApp oficial vive en un solo lugar, `src/app/core/contacto.ts` (`WHATSAPP_NUMERO`, `WHATSAPP_VISIBLE`, `whatsappUrl()`); no escribas el número a mano en componentes.
+- Definir el correo oficial en `src/app/data/site.config.ts` (`correo`; mientras esté vacío el sitio no lo muestra).
 - Verificar la UVT y las tarifas de referencia en `src/app/data/tax-params.ts`.
 - Revisar y adoptar formalmente la política de datos de `/privacidad`.
 

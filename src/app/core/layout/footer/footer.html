@@ -42,7 +42,7 @@
         <ul class="contact">
           <li>
             <app-icon name="chat" [size]="18" />
-            <a [href]="whatsapp" target="_blank" rel="noopener" (click)="alWhatsapp()">WhatsApp</a>
+            <a [href]="whatsapp" target="_blank" rel="noopener" (click)="alWhatsapp()">WhatsApp · {{ telefono }}</a>
           </li>
           @if (site.correo) {
             <li>

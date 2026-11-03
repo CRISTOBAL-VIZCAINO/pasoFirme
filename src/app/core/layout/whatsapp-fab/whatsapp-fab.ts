@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 
 import { TrackingService } from '../../tracking.service';
 
-import { whatsappUrl } from '../../../data/site.config';
+import { whatsappUrl } from '../../contacto';
 import { Icon } from '../../../shared/ui/icon/icon';
 
 @Component({

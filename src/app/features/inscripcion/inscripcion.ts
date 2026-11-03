@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
 import { InscripcionService } from '../../core/inscripcion.service';
 import { TrackingService } from '../../core/tracking.service';
 import { ZONAS } from '../../data/content';
-import { whatsappUrl } from '../../data/site.config';
+import { whatsappUrl } from '../../core/contacto';
 import { Icon } from '../../shared/ui/icon/icon';
 import { PageHero } from '../../shared/ui/page-hero/page-hero';
 
