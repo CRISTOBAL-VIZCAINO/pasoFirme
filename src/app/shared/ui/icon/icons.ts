@@ -5,6 +5,11 @@
 const circle = (cx: number, cy: number, r: number) => `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${r * 2} 0a${r} ${r} 0 1 0 ${-r * 2} 0`;
 
 export const ICONS = {
+  // Pictogramas de la Cartilla de colores
+  home: ['M3 10.5 12 3l9 7.5', 'M5 9.5V21h14V9.5', 'M10 21v-6h4v6'],
+  notebook: ['M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z', 'M8 2v20', 'M12 7h5', 'M12 11h5'],
+  moto: [circle(5.5, 17, 3.5), circle(18.5, 17, 3.5), 'M9 17h6l-3-7h4l2 3', 'M8 6h3l1 4'],
+  cashbox: ['M3 8h18v12H3z', 'M3 8l2-4h14l2 4', 'M8 14h8'],
   'arrow-right': ['M5 12h14', 'm12 5 7 7-7 7'],
   'arrow-left': ['M19 12H5', 'm12 19-7-7 7-7'],
   check: ['M20 6 9 17l-5-5'],

@@ -611,11 +611,15 @@
 
 // ---------- Animación de entrada ----------
 .reveal {
-  opacity: 0;
-  transform: translateY(18px);
   transition:
-    opacity 0.6s var(--ease),
-    transform 0.6s var(--ease);
+    opacity 0.4s var(--ease),
+    transform 0.4s var(--ease);
+}
+
+// Solo se oculta cuando la directiva ya confirmó que el elemento está lejos de la pantalla.
+.reveal.reveal--armed:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(14px);
 }
 
 .reveal.is-visible {
@@ -624,7 +628,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
+  .reveal,
+  .reveal.reveal--armed:not(.is-visible) {
     opacity: 1;
     transform: none;
   }

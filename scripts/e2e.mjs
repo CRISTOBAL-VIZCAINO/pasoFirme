@@ -38,6 +38,20 @@ const ev = async (expr) => {
   return r.result?.result?.value;
 };
 await send('Page.enable'); await send('Runtime.enable'); await send('Log.enable');
+// Las funciones de Netlify no existen en el servidor estático: se simulan y se registran las llamadas.
+await send('Page.addScriptToEvaluateOnNewDocument', { source: `
+  window.__calls = [];
+  const original = window.fetch.bind(window);
+  window.fetch = (u, o) => {
+    const url = String(u);
+    if (!url.includes('/.netlify/functions/')) return original(u, o);
+    const nombre = url.split('/').pop();
+    window.__calls.push({ nombre, body: typeof o?.body === 'string' ? o.body : null });
+    const cuerpo = nombre === 'conteo' ? { total: 25 } : { ok: true };
+    return new Promise((r) => setTimeout(() => r(new Response(JSON.stringify(cuerpo), { status: nombre === 'inscripcion' ? 201 : 200, headers: { 'content-type': 'application/json' } })), nombre === 'inscripcion' ? 700 : 0));
+  };
+  navigator.sendBeacon = (u) => { window.__calls.push({ nombre: String(u).split('/').pop(), beacon: true, body: null }); return true; };
+` });
 
 let ok = 0, fail = 0;
 const fallos = [];
@@ -64,7 +78,7 @@ await viewport(1280);
 console.log('\n## 1. Rutas, títulos y meta descripción');
 const rutas = {
   '/': 'Paso Firme · Tu negocio, con paso firme',
-  '/programa': 'El programa · Paso Firme',
+  '/programa': 'Cómo funciona · Paso Firme',
   '/herramientas': 'Herramientas gratuitas · Paso Firme',
   '/herramientas/caja-diaria': '¿Cuánto gana de verdad tu negocio? · Paso Firme',
   '/herramientas/gota-a-gota': 'Gota a gota vs. microcrédito · Paso Firme',
@@ -74,7 +88,7 @@ const rutas = {
   '/impacto': 'Impacto y SROI · Paso Firme',
   '/aprende': 'Aprende · Paso Firme',
   '/nosotros': 'Nosotros · Paso Firme',
-  '/inscripcion': 'Inscribe tu negocio · Paso Firme',
+  '/inscripcion': 'Quiero que me visiten · Paso Firme',
   '/privacidad': 'Tratamiento de datos personales · Paso Firme',
   '/ruta-que-no-existe': 'Página no encontrada · Paso Firme',
 };
@@ -114,7 +128,7 @@ for (const [href, info] of enlaces) {
   }
 }
 check('Enlaces de WhatsApp bien formados', externos.filter((h) => h.startsWith('https://wa.me/')).every((h) => /^https:\/\/wa\.me\/\d+\?text=.+/.test(h)), externos.join(' | '));
-check('Enlace mailto bien formado', externos.some((h) => /^mailto:[^@]+@[^@]+\.[a-z]+$/.test(h)));
+check('Sin enlaces mailto con correos de prueba', !externos.some((h) => /example/.test(h)));
 await abrir('/');
 check('Enlaces externos abren en pestaña nueva con rel=noopener', await ev(`[...document.querySelectorAll('a[href^="https://"]')].every(a => a.target === '_blank' && a.rel.includes('noopener'))`));
 
@@ -128,11 +142,11 @@ check('…y desplaza la página hasta la sección', await ev(`(()=>{const r=docu
 await click('a.btn--light[href="/programa#requisitos"]');
 await sleep(600);
 check('Botón «¿Quién puede participar?» lleva a #requisitos en la misma página', await ev(`(()=>{const r=document.getElementById('requisitos').getBoundingClientRect(); return r.top < 200 && r.top > -50;})()`));
-await click('header a[href="/impacto"]');
-await waitFor('location.pathname === "/impacto"');
+await click('header a[href="/aprende"]');
+await waitFor('location.pathname === "/aprende"');
 await sleep(300);
 check('Al navegar a otra página se vuelve arriba', (await ev('window.scrollY')) < 5, `scrollY=${await ev('scrollY')}`);
-check('Menú marca la página activa (aria-current)', (await ev(`document.querySelector('.desktop-nav a[aria-current="page"]')?.textContent.trim()`)) === 'Impacto');
+check('Menú marca la página activa (aria-current)', (await ev(`document.querySelector('.desktop-nav a[aria-current="page"]')?.textContent.trim()`)) === 'Aprende');
 
 // ─────────────────────────── 3. Menú móvil ───────────────────────────
 console.log('\n## 3. Menú móvil');
@@ -153,21 +167,31 @@ await tick();
 check('La tecla Escape cierra el menú', await ev(`!document.querySelector('#mobile-menu').classList.contains('is-open') && document.body.style.overflow===''`));
 await viewport(1280);
 
-// ─────────────────────────── 4. Inicio: pestañas P.A.S.O. y carrusel ───────────────────────────
-console.log('\n## 4. Inicio: pestañas del método y carrusel');
+// ─────────────────────────── 4. Inicio: hero, confianza, calculadora, mitos y carrusel ───────────────────────────
+console.log('\n## 4. Inicio: hero, confianza, calculadora, mitos y carrusel');
 await abrir('/');
-check('Pestaña P activa al inicio', await ev(`document.querySelector('#tab-paso-0').getAttribute('aria-selected')==='true' && !document.querySelector('#panel-paso-0').hidden && document.querySelector('#panel-paso-1').hidden`));
-await click('#tab-paso-2'); await tick();
-check('Clic en «S» muestra Simulación tributaria', (await txt('#panel-paso-2 h3')) === 'Simulación tributaria' && !(await ev(`document.querySelector('#panel-paso-2').hidden`)) && (await ev(`document.querySelector('#panel-paso-0').hidden`)));
-await ev(`document.querySelector('#tab-paso-2').focus()`);
-await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'ArrowRight', code: 'ArrowRight', windowsVirtualKeyCode: 39 }); await tick();
-check('Flecha derecha pasa a «O» y le da el foco', await ev(`document.activeElement.id==='tab-paso-3' && document.querySelector('#tab-paso-3').getAttribute('aria-selected')==='true'`));
-await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'ArrowRight', code: 'ArrowRight', windowsVirtualKeyCode: 39 }); await tick();
-check('Flecha derecha en la última vuelve a la primera', await ev(`document.activeElement.id==='tab-paso-0'`));
+check('Hero: botón principal «Quiero que me visiten»', (await txt('.hero .btn--primary')).startsWith('Quiero que me visiten'));
+check('Hero: sin el chip inventado del 84 %', !(await txt('.hero')).includes('84'));
+await setVal('#h-vendi', 200000); await setVal('#h-gaste', 90000); await tick();
+check('Mini-interacción del hero: «Te quedaron $ 110.000»', cop(await txt('.mini-out')).includes('$ 110.000'), cop(await txt('.mini-out')));
+check('Franja de confianza: «Lo que nunca hacemos» con 3 compromisos', (await ev(`document.querySelectorAll('.trust-card--never li').length`)) === 3);
+check('Franja de confianza nombra a UNAB y UNIMINUTO', (await txt('.trust-org')).includes('UNAB') && (await txt('.trust-org')).includes('UNIMINUTO'));
+check('Cifras: «7 de cada 10» y $1.200.000 (ejemplo)', (await txt('.figures')).includes('de cada 10') && cop(await txt('.figures')).includes('$1.200.000') && (await txt('.figures')).includes('Es un ejemplo'));
+check('Línea de tiempo con 4 hitos (Día 1 → Día 90)', (await ev(`document.querySelectorAll('.timeline .hito').length`)) === 4 && (await txt('.timeline')).includes('Día 90'));
+check('Tabla comparativa gota a gota vs. Paso Firme (3 filas)', (await ev(`document.querySelectorAll('.compare tbody tr').length`)) === 3);
+await ev(`document.querySelector('app-caja-rapida').scrollIntoView()`); await sleep(500);
+await setVal('#cr-ventas', 230000); await setVal('#cr-merc', 80000); await setVal('#cr-gastos', 10000); await setVal('#cr-casa', 100000); await tick();
+check('Calculadora del inicio: ganancia $ 140.000 y semáforo verde', cop(await txt('app-caja-rapida .big strong')) === '$ 140.000' && (await ev(`!!document.querySelector('.result--verde')`)), cop(await txt('app-caja-rapida .big strong')));
+check('Calculadora del inicio: enlace de WhatsApp para compartir', await ev(`[...document.querySelectorAll('app-caja-rapida a')].some(a => a.href.startsWith('https://wa.me/?text='))`));
+await setVal('#cr-casa', 200000); await tick();
+check('Calculadora del inicio: si saca de más, semáforo rojo', await ev(`!!document.querySelector('.result--rojo')`));
+check('Mitos: acordeón de 3 preguntas cerradas', (await ev(`document.querySelectorAll('.acordeon details').length`)) === 3 && (await ev(`[...document.querySelectorAll('.acordeon details')].every(d => !d.open)`)));
+await click('.acordeon summary'); await tick();
+check('Mitos: al tocar se abre la realidad', await ev(`document.querySelector('.acordeon details').open`));
 const dot = `[...document.querySelectorAll('app-photo-carousel .dot')].findIndex(d=>d.classList.contains('is-active'))`;
 await ev(`document.querySelector('app-photo-carousel').scrollIntoView()`); await sleep(800);
-check('Carrusel con 6 fotos', (await ev(`document.querySelectorAll('app-photo-carousel .slide').length`)) === 6);
-check('Sin archivo de foto se muestra el espacio reservado', await waitFor(`document.querySelectorAll('app-photo-carousel .placeholder').length >= 1`, 4000));
+check('Carrusel con 6 fotos rotuladas «Imagen ilustrativa»', (await ev(`document.querySelectorAll('app-photo-carousel .slide').length`)) === 6 && (await ev(`document.querySelectorAll('app-photo-carousel .ilustrativa').length`)) >= 1);
+check('Las 6 fotos del territorio cargan (sin espacio reservado)', (await ev(`document.querySelectorAll('app-photo-carousel .placeholder').length`)) === 0);
 check('Con movimiento reducido no hay autoplay ni botón de pausa', await ev(`!document.querySelector('app-photo-carousel [aria-label*="carrusel"]')`));
 await click('app-photo-carousel [aria-label="Foto siguiente"]'); await sleep(400);
 check('Flecha «siguiente» avanza a la foto 2', (await ev(dot)) === 1);
@@ -176,6 +200,27 @@ await click('app-photo-carousel [aria-label="Foto anterior"]'); await sleep(400)
 check('«Anterior» desde la primera va a la última', (await ev(dot)) === 5);
 await click('app-photo-carousel .dot:nth-child(3)'); await sleep(400);
 check('Punto 3 lleva a la foto 3', (await ev(dot)) === 2 && (await ev(`document.querySelector('app-photo-carousel .dot:nth-child(3)').getAttribute('aria-current')`)) === 'true');
+
+// Sin jerga en el inicio ni en la inscripción (lista Q6 del rediseño)
+const jerga = /originaci|scoring|risk-as|sroi|soberan|microtaller|consultor s[eé]nior|\bRST\b|\bRUI\b|Sisb[eé]n IV|phygital/i;
+const textoInicio = await ev(`document.querySelector('main').innerText`);
+check('Inicio sin jerga (originación, scoring, SROI, microtalleres, RST, RUI…)', !jerga.test(textoInicio), (textoInicio.match(jerga) ?? [''])[0]);
+await abrir('/inscripcion');
+check('Inscripción sin jerga', !jerga.test(await ev(`document.querySelector('main').innerText`)));
+await abrir('/');
+
+// Tamaño del inicio (criterios de aceptación del rediseño)
+await viewport(1280); await abrir('/'); await sleep(600);
+const altoEscritorio = await ev(`document.documentElement.scrollHeight`);
+const caracteres = await ev(`document.querySelector('main').innerText.replace(/\\s+/g,' ').length`);
+check(`Inicio en escritorio ≤ 5.500 px (mide ${altoEscritorio})`, altoEscritorio <= 5500);
+check(`Inicio con ≤ 4.500 caracteres de texto (tiene ${caracteres})`, caracteres <= 4500);
+await viewport(390, 844); await abrir('/'); await sleep(600);
+const altoMovil = await ev(`document.documentElement.scrollHeight`);
+check(`Inicio en celular ≤ 9.500 px (mide ${altoMovil})`, altoMovil <= 9500);
+check('Sin desborde horizontal en celular', await ev(`document.documentElement.scrollWidth <= window.innerWidth`));
+check('Botón principal visible sin hacer scroll en celular', await ev(`document.querySelector('.hero .btn--primary').getBoundingClientRect().top < window.innerHeight`));
+await viewport(1280);
 
 // ─────────────────────────── 5. Calculadora de caja diaria ───────────────────────────
 console.log('\n## 5. Calculadora «¿Cuánto gana de verdad tu negocio?»');
@@ -250,7 +295,7 @@ await abrir('/inscripcion');
 await ev(`localStorage.clear()`);
 await click('form button[type=submit]'); await tick();
 const nErrores = await ev(`document.querySelectorAll('form .error').length`);
-check('Enviar vacío muestra errores en todos los obligatorios', nErrores >= 8, `${nErrores} errores`);
+check('Enviar vacío muestra los 4 obligatorios (nombre, celular, zona, autorización)', nErrores === 4, `${nErrores} errores`);
 check('El foco va al primer campo inválido (nombre)', await ev(`document.activeElement.id === 'nombre'`));
 check('Los campos inválidos tienen aria-invalid=true', await ev(`document.querySelector('#nombre').getAttribute('aria-invalid')==='true'`));
 await setVal('#nombre', 'Marta Pérez'); await setVal('#celular', '12345'); await tick();
@@ -272,12 +317,57 @@ await click('input[formcontrolname=autorizacion]'); await tick();
 await click('form button[type=submit]'); await tick();
 check('Muestra «Enviando…» y deshabilita el botón', (await txt('form button[type=submit]')) === 'Enviando…' && (await ev(`document.querySelector('form button[type=submit]').disabled`)));
 await waitFor(`!!document.querySelector('.success')`, 3000);
-const radicado = await txt('.radicado strong');
-check('Envío exitoso con número de radicado', /^PF-\d{4}-[A-Z0-9]{5}$/.test(radicado), radicado);
-const guardado = await ev(`JSON.parse(localStorage.getItem('pasofirme.solicitudes'))`);
-check('La solicitud queda guardada con todos los datos', guardado?.length === 1 && guardado[0].datos.nombre === 'Marta Pérez' && guardado[0].datos.necesidades.salirGota === true && guardado[0].radicado === radicado);
-await click('.success button'); await tick();
-check('«Inscribir otro negocio» vuelve al formulario limpio', (await ev(`document.querySelector('#nombre')?.value`)) === '' && (await ev(`document.querySelectorAll('form .error').length`)) === 0);
+check('Envío exitoso: mensaje de confirmación', (await txt('.success h2')).includes('Te contactamos pronto por WhatsApp'));
+const envio = await ev(`(() => { const c = window.__calls.filter(x => x.nombre === 'inscripcion'); return c.length ? JSON.parse(c[c.length - 1].body) : null; })()`);
+check('Se envía una sola vez a la función «inscripcion»', (await ev(`window.__calls.filter(x => x.nombre === 'inscripcion').length`)) === 1);
+check('El envío lleva nombre, celular y consentimiento', envio?.nombre === 'Marta Pérez' && envio?.celular === '3001234567' && envio?.consentimiento === true, JSON.stringify(envio));
+check('El envío lleva visitorId, sesionId y versión de política', /^[0-9a-f-]{36}$/.test(envio?.visitorId ?? '') && /^[0-9a-f-]{36}$/.test(envio?.sesionId ?? '') && !!envio?.versionPolitica);
+check('El envío lleva el campo trampa vacío y el tiempo de llenado', envio?.website === '' && typeof envio?.tiempoMs === 'number' && envio.tiempoMs > 0);
+check('Las necesidades viajan como lista de textos', Array.isArray(envio?.necesidades) && envio.necesidades.includes('Salir del gota a gota'));
+check('Sin radicado ni aviso de «versión de demostración»', !(await txt('.success')).includes('radicado') && !(await txt('.success')).includes('demostración'));
+await click(".success button.btn--outline"); await tick();
+check('«Anotar otro negocio» vuelve al formulario limpio', (await ev(`document.querySelector('#nombre')?.value`)) === '' && (await ev(`document.querySelectorAll('form .error').length`)) === 0);
+
+// ─────────────────────────── 9b. Analítica y contador ───────────────────────────
+console.log('\n## 9b. Analítica propia y contador público');
+await abrir('/inscripcion');
+check('El formulario tiene el campo trampa fuera de pantalla y sin foco por teclado', await ev(`(() => { const i = document.querySelector('#website'); return i.tabIndex === -1 && i.closest('.hp').getBoundingClientRect().left < -1000; })()`));
+await abrir('/');
+await click('header a[href="/programa"]'); await waitFor('location.pathname === "/programa"'); await sleep(500);
+await click('header a[href="/herramientas"]'); await waitFor('location.pathname === "/herramientas"'); await sleep(500);
+await click('header a[href="/aprende"]'); await waitFor('location.pathname === "/aprende"'); await sleep(500);
+await sleep(2200);
+const eventos = await ev(`window.__calls.filter(c => c.nombre === 'track' && c.body).flatMap(c => JSON.parse(c.body).eventos)`);
+const vistas = eventos.filter((e) => e.tipo === 'page_view').map((e) => e.ruta);
+check('Navegar por 4 páginas registra page_view de cada una', ['/', '/programa', '/herramientas', '/aprende'].every((r) => vistas.includes(r)), vistas.join(','));
+check('Al salir de cada página se registra page_leave con duración', eventos.filter((e) => e.tipo === 'page_leave' && e.duracionMs > 0).length >= 3);
+const cuerpoTrack = await ev(`window.__calls.filter(c => c.nombre === 'track' && c.body).map(c => c.body).join('')`);
+check('La analítica envía visitorId y sesionId (UUID)', /"visitorId":"[0-9a-f-]{36}"/.test(cuerpoTrack) && /"sesionId":"[0-9a-f-]{36}"/.test(cuerpoTrack));
+check('La analítica NO envía lo escrito en el formulario (nombre, celular)', !/Marta|3001234567/.test(cuerpoTrack));
+// Clics medidos
+await abrir('/');
+await click('.hero .btn--primary'); await waitFor('location.pathname === "/inscripcion"'); await sleep(2200);
+const ctas = await ev(`window.__calls.filter(c => c.nombre === 'track' && c.body).flatMap(c => JSON.parse(c.body).eventos).filter(e => e.tipo === 'cta_click').map(e => e.detalle.cta)`);
+check('El botón principal del inicio registra cta_click «inscribete_hero»', ctas.includes('inscribete_hero'), ctas.join(','));
+// Formulario: empezar y enviar con error
+await ev(`document.querySelector('#nombre').dispatchEvent(new FocusEvent('focusin', { bubbles: true }))`); await sleep(2200);
+await click('form button[type=submit]'); await sleep(2200);
+const formEv = await ev(`window.__calls.filter(c => c.nombre === 'track' && c.body).flatMap(c => JSON.parse(c.body).eventos).filter(e => e.tipo.startsWith('form_')).map(e => e.tipo + ':' + (e.detalle?.motivo ?? ''))`);
+check('Primer foco registra form_start y enviar vacío form_submit_error:validacion', formEv.includes('form_start:') && formEv.includes('form_submit_error:validacion'), formEv.join(','));
+// Herramienta
+await abrir('/herramientas/caja-diaria');
+await setVal('#ventas', 230000); await sleep(4600);
+const tool = await ev(`window.__calls.filter(c => c.nombre === 'track' && c.body).flatMap(c => JSON.parse(c.body).eventos).filter(e => e.tipo.startsWith('tool_')).map(e => e.tipo + ':' + e.detalle.tool + ':' + (e.detalle.resultado ?? ''))`);
+check('Calculadora: tool_start y tool_complete con categoría (sin montos)', tool.some((t) => t.startsWith('tool_start:caja-diaria')) && tool.some((t) => /^tool_complete:caja-diaria:(verde|amarillo|rojo)$/.test(t)), tool.join(','));
+check('Los eventos de herramienta no incluyen montos', !/230000/.test(await ev(`window.__calls.filter(c => c.nombre === 'track' && c.body).map(c => c.body).join('')`)));
+// Contador público
+await abrir('/');
+check('Contador público: con 25 inscritos se muestra', await waitFor(`document.querySelector('app-contador-inscritos')?.textContent.includes('25')`, 3000));
+// Modo interno: el equipo no cuenta como visita
+await send('Page.navigate', { url: BASE + '/programa?interno=1' }); await waitFor('document.querySelector("main h1")', 8000); await sleep(500);
+await click('header a[href="/aprende"]'); await waitFor('location.pathname === "/aprende"'); await sleep(2200);
+check('Con ?interno=1 no se registra ninguna visita', (await ev(`window.__calls.filter(c => c.nombre === 'track').length`)) === 0);
+await send('Page.navigate', { url: BASE + '/?interno=0' }); await waitFor('document.querySelector("main h1")', 8000); await sleep(500);
 
 // ─────────────────────────── 10. Formulario de entidades ───────────────────────────
 console.log('\n## 10. Formulario de entidades');
@@ -314,7 +404,7 @@ check('La primera pregunta frecuente viene abierta', await ev(`document.querySel
 console.log('\n## 12. Nosotros');
 await abrir('/nosotros');
 await ev(`document.querySelector('.team').scrollIntoView()`); await sleep(1500);
-check('Equipo: 5 integrantes con iniciales cuando falta la foto', (await ev(`document.querySelectorAll('.member').length`)) === 5 && (await ev(`document.querySelectorAll('.member span.avatar').length`)) === 5);
+check('Equipo: 5 integrantes con su foto', (await ev(`document.querySelectorAll('.member').length`)) === 5 && (await ev(`document.querySelectorAll('.member img').length`)) === 5);
 check('Carrusel del equipo con 4 fotos', (await ev(`document.querySelectorAll('app-photo-carousel .slide').length`)) === 4);
 
 // ─────────────────────────── 13. Accesibilidad básica ───────────────────────────

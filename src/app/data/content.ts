@@ -21,7 +21,7 @@ export const PROBLEMAS: Problema[] = [
   {
     icon: 'wallet',
     tone: 'sun',
-    titulo: 'La «caja única»',
+    titulo: 'Una sola plata para la casa y el negocio',
     texto:
       'La plata de la casa y la del negocio viven en el mismo bolsillo. Sin darse cuenta, lo que era para resurtir se va en gastos del hogar y el negocio se descapitaliza.',
     dato: '72%',
@@ -31,17 +31,17 @@ export const PROBLEMAS: Problema[] = [
   {
     icon: 'alert',
     tone: 'coral',
-    titulo: 'La trampa del «gota a gota»',
+    titulo: 'El cobrador que pasa todos los días',
     texto:
       'Sin historial ni registros, el banco dice que no. El prestamista informal dice que sí, pero cobra intereses que se comen toda la ganancia y pone en riesgo la tranquilidad de la familia.',
     dato: '20%',
-    datoTexto: 'mensual es la tasa promedio que pagan los comerciantes endeudados informalmente',
-    fuente: 'Encuesta Modelo PEDAF, Malambo 2024',
+    datoTexto: 'mensual: ejemplo ilustrativo de lo que suele cobrar un gota a gota',
+    fuente: 'Ejemplo ilustrativo del equipo; no es una estadística oficial',
   },
   {
     icon: 'shield',
     tone: 'navy',
-    titulo: 'El miedo a la DIAN y a perder subsidios',
+    titulo: '¿Miedo a perder el Sisbén?',
     texto:
       'Muchos creen que sacar el RUT o anotar sus ventas los saca del Sisbén o de Renta Ciudadana. Ese temor los mantiene lejos de cualquier ayuda formal.',
     dato: '57,1%',
@@ -51,7 +51,7 @@ export const PROBLEMAS: Problema[] = [
   {
     icon: 'clock',
     tone: 'teal',
-    titulo: 'No hay tiempo para ir a clases',
+    titulo: 'No puedes cerrar el puesto para estudiar',
     texto:
       'Cerrar el puesto 3 horas para ir a una capacitación es perder «el diario» y arriesgar el espacio. Por eso los programas en aula no llegan a quien más los necesita.',
     dato: '3 h',
@@ -73,10 +73,10 @@ export const METODO_PASO: PilarPaso[] = [
     letra: 'P',
     titulo: 'Pedagogía contable',
     icon: 'book',
-    resumen: 'Aprendes a anotar, costear y calcular tu margen con una cartilla de colores, en microtalleres de 15 minutos.',
+    resumen: 'Aprendes a anotar, costear y calcular tu margen con una cartilla de colores, en charlas cortas de 15 minutos.',
     puntos: [
       'Cartilla de Caja Diaria con código de colores y pictogramas',
-      'Microtalleres en horas valle, sin tecnicismos',
+      'Charlas cortas en horas valle, sin tecnicismos',
       'Cálculo de costo, precio y margen de tus productos',
     ],
   },
@@ -125,23 +125,51 @@ export const COMO_FUNCIONA: Paso[] = [
   {
     icon: 'users',
     titulo: 'Te visitamos',
-    texto: 'Un brigadista universitario llega a tu puesto, conversa contigo y entiende tu negocio. Sin papeleo y sin juicios.',
+    texto: 'Un brigadista llega a tu puesto y conversa contigo. Sin papeleo y sin juicios.',
   },
   {
     icon: 'mic',
     titulo: 'Anotas a tu manera',
-    texto: 'En la cartilla de colores o con una nota de voz o una foto por WhatsApp. El copiloto de IA lo convierte en registros ordenados.',
+    texto: 'En la cartilla de colores, con una nota de voz o con una foto por WhatsApp. El asistente lo deja ordenado.',
   },
   {
     icon: 'chart',
     titulo: 'Ves cuánto ganas',
-    texto: 'Cada semana recibes un resumen sencillo, en tu lenguaje: cuánto vendiste, cuánto gastaste y cuánto ganaste de verdad.',
+    texto: 'Cada semana recibes un resumen sencillo: cuánto vendiste, cuánto gastaste y cuánto ganaste de verdad.',
   },
   {
     icon: 'landmark',
-    titulo: 'Accedes a crédito justo',
-    texto: 'Con tus registros armamos tu perfil y, si tú lo autorizas, lo presentamos a microfinancieras aliadas. Meta: pre-aprobación en menos de 24 horas.',
+    titulo: 'Tu historial queda listo',
+    texto: 'Con tus registros armamos tu historial y, solo si tú lo autorizas, lo presentamos a entidades aliadas. Meta del piloto: respuesta en menos de 24 horas.',
   },
+];
+
+export interface HitoTiempo {
+  icon: IconName;
+  cuando: string;
+  titulo: string;
+  texto: string;
+}
+
+/** Línea de tiempo del acompañamiento. Los plazos son los del piloto de 90 días. */
+export const LINEA_TIEMPO: HitoTiempo[] = [
+  { icon: 'map-pin', cuando: 'Día 1', titulo: 'Te visitamos', texto: 'Un brigadista llega a tu puesto y conversa contigo.' },
+  { icon: 'notebook', cuando: 'Semana 1', titulo: 'Ya sabes cuánto ganas', texto: 'Empiezas a anotar y ves tu ganancia del día.' },
+  { icon: 'chart', cuando: 'Semana 4', titulo: 'Tu primer resumen', texto: 'Recibes por WhatsApp cuánto vendiste, gastaste y ganaste.' },
+  { icon: 'shield', cuando: 'Día 90', titulo: 'Tu historial listo', texto: 'Si tú quieres, lo usas para pedir un crédito justo.' },
+];
+
+export interface FilaComparacion {
+  tema: string;
+  gotaAGota: string;
+  pasoFirme: string;
+}
+
+/** Comparación honesta: lo que el gota a gota hace bien y lo que buscamos mejorar (metas del piloto). */
+export const COMPARACION: FilaComparacion[] = [
+  { tema: 'Rapidez', gotaAGota: 'Te lo dan el mismo día', pasoFirme: 'Meta: respuesta en menos de 24 horas' },
+  { tema: 'Papeles', gotaAGota: 'Casi ninguno', pasoFirme: 'Sin papeles imposibles: tus anotaciones son tu prueba' },
+  { tema: 'Costo', gotaAGota: 'Muy alto: se come tu ganancia', pasoFirme: 'Meta: mucho más barato que el cobrador diario' },
 ];
 
 export interface Audiencia {
@@ -164,7 +192,7 @@ export const AUDIENCIAS: Audiencia[] = [
     titulo: 'Gratis para ti, en tu puesto',
     texto: 'Para vendedores estacionarios, semiestacionarios y tiendas de barrio del Paseo Bolívar y el Atlántico.',
     puntos: ['Orden de caja sin tecnicismos', 'Salida del gota a gota', 'Simulación tributaria anónima'],
-    cta: 'Inscribe tu negocio',
+    cta: 'Quiero que me visiten',
     ruta: '/inscripcion',
   },
   {
@@ -212,12 +240,12 @@ export const MITOS: Mito[] = [
   {
     mito: 'Si saco el RUT pierdo el Sisbén y Renta Ciudadana.',
     realidad:
-      'Tener RUT no es, por sí solo, causal de salida de los programas sociales. La focalización se basa en tus condiciones de vida e ingresos reales (Sisbén IV y la transición al Registro Universal de Ingresos, RUI). Ordenar tus cuentas te ayuda a demostrar tu situación real.',
+      'Sacar el RUT no te quita el Sisbén por sí solo. Los subsidios se miran según cómo vive tu hogar. Cuéntale tu caso al brigadista y lo revisamos juntos.',
   },
   {
     mito: 'Si anoto mis ventas, la DIAN me va a cobrar.',
     realidad:
-      'Tus registros son tuyos. En Paso Firme son confidenciales: no los compartimos con autoridades. Sirven para que tomes mejores decisiones y, solo si tú lo autorizas, para solicitar un crédito.',
+      'Tus registros son tuyos. No los compartimos sin tu autorización, salvo una orden legal. Sirven para que decidas mejor y, solo si tú quieres, para pedir un crédito.',
   },
   {
     mito: 'Los bancos nunca le prestan a quien vende en la calle.',
@@ -227,12 +255,22 @@ export const MITOS: Mito[] = [
   {
     mito: 'El gota a gota es más fácil y rápido.',
     realidad:
-      'Es rápido, pero carísimo: al 20% mensual, un préstamo de $500.000 te cuesta $100.000 cada mes. Si lo renuevas todo el año, pagas $1.200.000 en intereses: más del doble de lo que te prestaron.',
+      'Es rápido, pero carísimo. Ejemplo: si pagas $100.000 al mes por un préstamo de $500.000, en un año se te van $1.200.000 solo en intereses, más del doble de lo que te prestaron.',
   },
   {
     mito: 'Lo que sobra en el cajón es ganancia.',
     realidad:
       'No siempre. Parte de esa plata es para volver a comprar mercancía. Si se gasta en la casa, el negocio se va quedando sin capital poco a poco, aunque venda bien.',
+  },
+  {
+    mito: 'Si me ven anotando, la Alcaldía me multa.',
+    realidad:
+      'Anotar tus cuentas en una libreta o por WhatsApp es tuyo y no es ningún trámite. Paso Firme no es la Alcaldía y no multa a nadie.',
+  },
+  {
+    mito: 'Las fundaciones prometen y no vuelven.',
+    realidad:
+      'Por eso te decimos desde el inicio cuándo volvemos: visita cada 15 días durante 90 días, con el mismo brigadista y por tu WhatsApp.',
   },
   {
     mito: 'Para ordenar mi negocio necesito un contador caro.',
@@ -250,7 +288,7 @@ export const FAQ: Pregunta[] = [
   {
     pregunta: '¿Cuánto me cuesta?',
     respuesta:
-      'Nada. Paso Firme no le cobra al comerciante. El programa se financia con convenios institucionales y con comisiones que pagan las entidades financieras cuando aprueban un crédito.',
+      'Nada. Paso Firme no te cobra. Si algún día te conviene un crédito, te mostramos varias opciones, incluso si la mejor es no pedir crédito todavía. El programa se sostiene con convenios y con comisiones de las entidades aliadas, nunca de tu bolsillo.',
   },
   {
     pregunta: '¿Tengo que cerrar mi puesto o ir a algún lugar?',
@@ -260,7 +298,7 @@ export const FAQ: Pregunta[] = [
   {
     pregunta: '¿Ustedes son de la DIAN o de la Alcaldía?',
     respuesta:
-      'No. Paso Firme es una iniciativa de emprendimiento social nacida en la academia. No fiscalizamos ni cobramos impuestos. Nos articulamos con programas como los Núcleos de Apoyo Contable y Fiscal (NAF), que ofrecen orientación gratuita, pero no compartimos tu información con autoridades.',
+      'No. Paso Firme es una iniciativa de emprendimiento social nacida en la academia. No fiscalizamos ni cobramos impuestos. Nos articulamos con programas como los Núcleos de Apoyo Contable y Fiscal (NAF), que ofrecen orientación gratuita. No compartimos tu información sin tu autorización, salvo una orden legal.',
   },
   {
     pregunta: '¿Quiénes son los brigadistas?',
@@ -296,7 +334,7 @@ export interface Termino {
 
 export const GLOSARIO: Termino[] = [
   { termino: 'Caja única', definicion: 'Cuando la plata de la casa y la del negocio se mezclan en el mismo bolsillo o cajón.' },
-  { termino: 'Gota a gota', definicion: 'Préstamo informal con cobro diario y tasas usureras, usualmente cercanas al 20% mensual.' },
+  { termino: 'Gota a gota', definicion: 'Préstamo informal con cobro diario y tasas muy altas, que suelen rondar el 20% mensual.' },
   { termino: 'Margen', definicion: 'Lo que te queda de cada venta después de descontar lo que te costó la mercancía.' },
   { termino: 'Flujo de caja', definicion: 'El registro de la plata que entra y sale de tu negocio día a día.' },
   { termino: 'RUT', definicion: 'Registro Único Tributario. Te identifica ante la DIAN; tenerlo no implica pagar impuestos de inmediato.' },
@@ -437,7 +475,7 @@ export const FOTOS_TERRITORIO: Foto[] = [
   {
     src: 'images/territorio/04-microtaller-tienda.jpg',
     alt: 'Microtaller de 15 minutos con la dueña de una tienda de barrio',
-    titulo: 'Microtalleres de 15 minutos',
+    titulo: 'Charlas cortas de 15 minutos',
     lugar: 'Tienda de barrio, Soledad',
     sugerencia: 'Brigadista explicando algo en una hoja a la dueña de una tienda, detrás del mostrador.',
   },
@@ -452,7 +490,7 @@ export const FOTOS_TERRITORIO: Foto[] = [
     src: 'images/territorio/06-comerciante-orgulloso.jpg',
     alt: 'Comerciante sonriente frente a su puesto de frutas',
     titulo: 'Negocios que avanzan con paso firme',
-    lugar: 'Malambo, Atlántico',
+    lugar: 'Gran Bazar, Barranquilla',
     sugerencia: 'Retrato del comerciante orgulloso frente a su puesto, mirando a la cámara. Transmite dignidad.',
   },
 ];

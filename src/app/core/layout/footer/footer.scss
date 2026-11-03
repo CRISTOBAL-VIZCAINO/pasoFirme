@@ -1,7 +1,7 @@
 .footer {
   background: var(--navy-950);
   color: #aebccb;
-  padding-block: var(--space-8) var(--space-6);
+  padding-block: var(--space-7) var(--space-5);
   font-size: var(--fs-sm);
 }
 
@@ -99,4 +99,9 @@ a {
   p {
     margin: 0;
   }
+}
+
+.analytics-note {
+  margin: var(--space-4) 0 0;
+  max-width: 90ch;
 }

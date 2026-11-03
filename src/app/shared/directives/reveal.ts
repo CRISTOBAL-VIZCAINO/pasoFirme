@@ -19,11 +19,14 @@ export class Reveal {
 
     afterNextRender(() => {
       const node = this.el.nativeElement;
-      if (!('IntersectionObserver' in window)) {
+      // Estado inicial seguro: si ya está cerca de la pantalla o no hay observer, se muestra sin animar.
+      const cerca = node.getBoundingClientRect().top < window.innerHeight + 120;
+      if (cerca || !('IntersectionObserver' in window)) {
         node.classList.add('is-visible');
         return;
       }
-      node.style.transitionDelay = `${this.revealDelay()}ms`;
+      node.classList.add('reveal--armed');
+      node.style.transitionDelay = `${Math.min(this.revealDelay(), 120)}ms`;
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
@@ -31,7 +34,7 @@ export class Reveal {
             observer.disconnect();
           }
         },
-        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+        { threshold: 0, rootMargin: '0px 0px 160px 0px' },
       );
       observer.observe(node);
       destroyRef.onDestroy(() => observer.disconnect());

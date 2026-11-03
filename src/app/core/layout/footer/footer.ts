@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { TrackingService } from '../../tracking.service';
 import { SITE, whatsappUrl } from '../../../data/site.config';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Logo } from '../../../shared/ui/logo/logo';
@@ -15,5 +16,11 @@ import { Logo } from '../../../shared/ui/logo/logo';
 export class Footer {
   protected readonly site = SITE;
   protected readonly whatsapp = whatsappUrl('Hola, quiero más información sobre Paso Firme.');
+  private readonly tracking = inject(TrackingService);
+
+  protected alWhatsapp(): void {
+    this.tracking.registrar('whatsapp_click', { origen: 'footer' });
+  }
+
   protected readonly year = new Date().getFullYear();
 }

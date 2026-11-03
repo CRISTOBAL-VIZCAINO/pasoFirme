@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { ACTIVIDADES_RST, TAX_PARAMS } from '../../../data/tax-params';
+import { TrackingService } from '../../../core/tracking.service';
 import { CopPipe } from '../../../shared/pipes/cop.pipe';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { PageHero } from '../../../shared/ui/page-hero/page-hero';
@@ -46,6 +47,7 @@ export class SimuladorTributario {
   });
 
   constructor() {
+    inject(TrackingService).seguirHerramienta('simulador-tributario', this.form.valueChanges);
     // Al cambiar la actividad, se cargan sus tarifas de referencia (el usuario puede editarlas después).
     this.form.controls.actividad.valueChanges.pipe(takeUntilDestroyed()).subscribe((id) => {
       const actividad = ACTIVIDADES_RST.find((a) => a.id === id);

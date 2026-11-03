@@ -6,6 +6,9 @@
           <div class="frame">
             @if (!faltantes().has(i)) {
               <img [src]="foto.src" [alt]="foto.alt" loading="lazy" decoding="async" (error)="marcarFaltante(i)" />
+              @if (ilustrativa()) {
+                <span class="ilustrativa">Imagen ilustrativa</span>
+              }
             } @else {
               <div class="placeholder">
                 <app-icon name="camera" [size]="36" />

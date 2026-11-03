@@ -61,3 +61,36 @@ Cada comerciante que aparezca debe firmar una autorización de uso de imagen.
 - Reemplazar el WhatsApp y el correo de marcador en `src/app/data/site.config.ts`.
 - Verificar la UVT y las tarifas de referencia en `src/app/data/tax-params.ts`.
 - Revisar y adoptar formalmente la política de datos de `/privacidad`.
+
+## Backend, analítica y panel (Netlify Functions + Supabase)
+
+El navegador nunca habla con Supabase: solo las funciones de `netlify/functions/` lo hacen, con la llave `service_role`.
+
+| Función | Acceso | Qué hace |
+| --- | --- | --- |
+| `inscripcion` | público | Guarda la inscripción (valida celular y consentimiento, anti-spam, sin duplicar celulares) |
+| `conteo` | público | Devuelve solo `{ "total": N }` |
+| `track` | público | Recibe eventos de analítica (lista blanca de tipos; ignora bots) |
+| `admin-login` | público | Cambia la contraseña por un token de 8 h (máx. 5 fallos / 15 min por IP) |
+| `admin-dashboard`, `admin-inscripciones`, `admin-visitantes` | protegido | `Authorization: Bearer <token>` (panel) o `x-api-key: <ADMIN_PASSWORD>` (Postman) |
+
+### Variables de entorno
+
+Se configuran en Netlify (*Site settings → Environment variables*). Para probar en local copia `.env.example` a `.env` (ignorado por git) y ejecuta `npx netlify dev` (http://localhost:8888).
+
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_PASSWORD` (≥ 16 caracteres), `ADMIN_TOKEN_SECRET` (64 hex: `openssl rand -hex 32`), `IP_HASH_SALT`.
+
+### Rotar contraseña y secretos
+
+- **`ADMIN_PASSWORD`**: cambiarla en Netlify y volver a desplegar. Las sesiones abiertas siguen valiendo hasta que expiren (8 h); para cerrarlas de inmediato rota también `ADMIN_TOKEN_SECRET`.
+- **`ADMIN_TOKEN_SECRET`**: generar uno nuevo (`openssl rand -hex 32`), guardarlo en Netlify y volver a desplegar. Invalida todas las sesiones del panel.
+- **`SUPABASE_SERVICE_ROLE_KEY`**: regenerarla en Supabase (*Project settings → API*), actualizarla en Netlify y volver a desplegar.
+- **`IP_HASH_SALT`**: cambiarla corta la correlación de IPs antiguas (los intentos fallidos de login pasados dejan de contar).
+- Si una llave se filtró (por ejemplo, quedó en un commit), rótala de inmediato aunque borres el commit.
+
+### Analítica y privacidad
+
+- Sin cookies de terceros: un identificador aleatorio en `localStorage` (`pf_vid`) y otro en `sessionStorage` (`pf_sid`).
+- Solo viajan nombres de página, de herramienta, categorías de resultado y duraciones. Nunca lo que la persona escribe.
+- El equipo no se cuenta como visita entrando una vez con `?interno=1` (se quita con `?interno=0`). También se respeta «No rastrear» del navegador.
+- `/admin` no se mide, no está enlazado y lleva `noindex`.

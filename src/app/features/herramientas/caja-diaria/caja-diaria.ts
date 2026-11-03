@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
+import { TrackingService } from '../../../core/tracking.service';
 import { CopPipe } from '../../../shared/pipes/cop.pipe';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { PageHero } from '../../../shared/ui/page-hero/page-hero';
@@ -37,6 +38,10 @@ export class CajaDiaria {
       cuotaDeudaDiaria: v.cuotaDeudaDiaria ?? 0,
     });
   });
+
+  constructor() {
+    inject(TrackingService).seguirHerramienta('caja-diaria', this.form.valueChanges, () => this.r().semaforo);
+  }
 
   protected readonly costoPct = computed(() => this.valores().costoMercanciaPct ?? 0);
 

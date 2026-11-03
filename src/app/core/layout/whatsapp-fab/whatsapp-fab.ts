@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+
+import { TrackingService } from '../../tracking.service';
 
 import { whatsappUrl } from '../../../data/site.config';
 import { Icon } from '../../../shared/ui/icon/icon';
@@ -7,9 +9,13 @@ import { Icon } from '../../../shared/ui/icon/icon';
   selector: 'app-whatsapp-fab',
   imports: [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(window:scroll)': 'revisar()',
+    '(window:resize)': 'revisar()',
+  },
   template: `
-    <a class="fab" [href]="url" target="_blank" rel="noopener">
-      <app-icon name="chat" [size]="26" />
+    <a class="fab" [class.fab--hidden]="oculto()" [attr.tabindex]="oculto() ? -1 : null" [attr.aria-hidden]="oculto() ? 'true' : null" [href]="url" target="_blank" rel="noopener" (click)="alClic()">
+      <app-icon name="chat" [size]="24" />
       <span class="text">¿Hablamos?</span>
       <span class="visually-hidden">(se abre WhatsApp en una pestaña nueva)</span>
     </a>
@@ -18,13 +24,15 @@ import { Icon } from '../../../shared/ui/icon/icon';
     .fab {
       position: fixed;
       right: clamp(1rem, 3vw, 1.75rem);
-      bottom: clamp(1rem, 3vw, 1.75rem);
+      bottom: calc(clamp(0.75rem, 3vw, 1.75rem) + env(safe-area-inset-bottom, 0px));
       z-index: 90;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      min-height: 56px;
-      padding: 0 1.1rem;
+      min-width: 48px;
+      min-height: 48px;
+      justify-content: center;
+      padding: 0 0.8rem;
       border-radius: var(--radius-pill);
       background: #128c4a;
       color: var(--white);
@@ -40,6 +48,12 @@ import { Icon } from '../../../shared/ui/icon/icon';
       }
     }
 
+    .fab--hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+    }
+
     .text {
       display: none;
 
@@ -50,5 +64,31 @@ import { Icon } from '../../../shared/ui/icon/icon';
   `,
 })
 export class WhatsappFab {
-  protected readonly url = whatsappUrl('Hola, quiero saber más sobre Paso Firme.');
+  /** Se oculta cuando ya hay un botón de WhatsApp a la vista (elementos con `data-hide-fab`). */
+  protected readonly oculto = signal(false);
+  private readonly tracking = inject(TrackingService);
+
+  protected alClic(): void {
+    this.tracking.registrar('whatsapp_click', { origen: 'flotante' });
+  }
+
+  private pendiente = false;
+
+  protected revisar(): void {
+    if (this.pendiente) {
+      return;
+    }
+    this.pendiente = true;
+    requestAnimationFrame(() => {
+      this.pendiente = false;
+      const alto = window.innerHeight;
+      const visible = Array.from(document.querySelectorAll('[data-hide-fab]')).some((el) => {
+        const r = el.getBoundingClientRect();
+        return r.bottom > 0 && r.top < alto;
+      });
+      this.oculto.set(visible);
+    });
+  }
+
+  protected readonly url = whatsappUrl('Hola, quiero que me visiten en mi puesto.');
 }

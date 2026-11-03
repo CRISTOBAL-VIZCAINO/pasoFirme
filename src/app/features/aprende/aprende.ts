@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { TrackingService } from '../../core/tracking.service';
 import { CARTILLA_COLORES, FAQ, GLOSARIO, MITOS } from '../../data/content';
 import { Reveal } from '../../shared/directives/reveal';
 import { CtaBanner } from '../../shared/ui/cta-banner/cta-banner';
@@ -29,6 +30,8 @@ export class Aprende {
     return q ? GLOSARIO.filter((t) => normalizar(`${t.termino} ${t.definicion}`).includes(q)) : GLOSARIO;
   });
 
+  private readonly tracking = inject(TrackingService);
+
   protected alternar(i: number): void {
     this.revelados.update((set) => {
       const next = new Set(set);
@@ -36,6 +39,7 @@ export class Aprende {
         next.delete(i);
       } else {
         next.add(i);
+        this.tracking.registrar('faq_open', { mito: `mito_${i + 1}` });
       }
       return next;
     });

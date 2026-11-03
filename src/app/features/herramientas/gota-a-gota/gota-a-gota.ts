@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
+import { TrackingService } from '../../../core/tracking.service';
 import { CopPipe } from '../../../shared/pipes/cop.pipe';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { PageHero } from '../../../shared/ui/page-hero/page-hero';
@@ -36,6 +37,10 @@ export class GotaAGota {
       diasCobroMes: v.diasCobroMes ?? 26,
     });
   });
+
+  constructor() {
+    inject(TrackingService).seguirHerramienta('gota-a-gota', this.form.valueChanges);
+  }
 
   protected readonly plazo = computed(() => this.valores().plazoMeses ?? 1);
 
