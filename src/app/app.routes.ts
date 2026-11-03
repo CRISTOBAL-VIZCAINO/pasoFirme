@@ -99,6 +99,11 @@ export const routes: Routes = [
     data: { description: 'Política de tratamiento de datos personales de Paso Firme (Ley 1581 de 2012).' },
   },
   {
+    // Panel interno: no está enlazado ni se mide; se carga de forma diferida.
+    path: 'admin',
+    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+  },
+  {
     path: '**',
     loadComponent: () => import('./features/not-found/not-found').then((m) => m.NotFound),
     title: 'Página no encontrada',

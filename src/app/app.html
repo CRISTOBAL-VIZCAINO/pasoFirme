@@ -1,7 +1,11 @@
 <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
-<app-header />
+@if (!esPanel()) {
+  <app-header />
+}
 <main id="contenido" tabindex="-1">
   <router-outlet />
 </main>
-<app-footer />
-<app-whatsapp-fab />
+@if (!esPanel()) {
+  <app-footer />
+  <app-whatsapp-fab />
+}
