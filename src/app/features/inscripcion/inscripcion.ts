@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -9,6 +9,15 @@ import { ZONAS } from '../../data/content';
 import { whatsappUrl } from '../../core/contacto';
 import { Icon } from '../../shared/ui/icon/icon';
 import { PageHero } from '../../shared/ui/page-hero/page-hero';
+
+export type CanalContacto = 'whatsapp' | 'llamada' | 'visita';
+
+/** Texto de la pantalla de éxito según el canal que eligió la persona. */
+export const MENSAJES_EXITO: Record<CanalContacto, { titulo: string; detalle: string }> = {
+  whatsapp: { titulo: '¡Listo! Te escribimos pronto por WhatsApp.', detalle: 'Un brigadista te escribe en los próximos días para acordar la visita.' },
+  llamada: { titulo: '¡Listo! Te llamamos pronto al número que dejaste.', detalle: 'Un brigadista te llama en los próximos días para acordar la visita.' },
+  visita: { titulo: '¡Listo! Pasamos por tu puesto para coordinar la visita.', detalle: 'Un brigadista se acerca en los próximos días, en horas de poco movimiento.' },
+};
 
 @Component({
   selector: 'app-inscripcion',
@@ -59,6 +68,13 @@ export class Inscripcion {
   protected readonly errorServidor = signal<string | null>(null);
   protected readonly intentoEnviar = signal(false);
 
+  protected readonly canalElegido = signal<CanalContacto>('whatsapp');
+  protected readonly exito = computed(() => MENSAJES_EXITO[this.canalElegido()]);
+
+  protected alWhatsapp(): void {
+    this.tracking.registrar('whatsapp_click', { origen: 'inscripcion_exito' });
+  }
+
   protected readonly whatsapp = whatsappUrl('Hola, acabo de inscribir mi negocio en Paso Firme.');
 
   protected invalido(path: string): boolean {
@@ -107,6 +123,7 @@ export class Inscripcion {
       return;
     }
     this.tracking.registrar('form_submit_ok');
+    this.canalElegido.set(v.contacto in MENSAJES_EXITO ? (v.contacto as CanalContacto) : 'whatsapp');
     this.enviada.set(true);
     window.scrollTo({ top: 0 });
   }

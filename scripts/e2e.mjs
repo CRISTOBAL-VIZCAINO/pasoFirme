@@ -351,7 +351,7 @@ await click('input[formcontrolname=autorizacion]'); await tick();
 await click('form button[type=submit]'); await tick();
 check('Muestra «Enviando…» y deshabilita el botón', (await txt('form button[type=submit]')) === 'Enviando…' && (await ev(`document.querySelector('form button[type=submit]').disabled`)));
 await waitFor(`!!document.querySelector('.success')`, 3000);
-check('Envío exitoso: mensaje de confirmación', (await txt('.success h2')).includes('Te contactamos pronto por WhatsApp'));
+check('Envío exitoso: mensaje de confirmación', (await txt('.success h2')).includes('Te escribimos pronto por WhatsApp'));
 const envio = await ev(`(() => { const c = window.__calls.filter(x => x.nombre === 'inscripcion'); return c.length ? JSON.parse(c[c.length - 1].body) : null; })()`);
 check('Se envía una sola vez a la función «inscripcion»', (await ev(`window.__calls.filter(x => x.nombre === 'inscripcion').length`)) === 1);
 check('El envío lleva nombre, celular y consentimiento', envio?.nombre === 'Marta Pérez' && envio?.celular === '3001234567' && envio?.consentimiento === true, JSON.stringify(envio));

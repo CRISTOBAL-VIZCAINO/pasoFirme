@@ -10,8 +10,8 @@
     @if (enviada()) {
       <div class="card success" role="status" tabindex="-1">
         <span class="icon-badge icon-badge--sun big"><app-icon name="check-circle" [size]="34" /></span>
-        <h2>¡Listo! Te contactamos pronto por WhatsApp</h2>
-        <p class="lead">Un brigadista te escribe en los próximos días para acordar la visita.</p>
+        <h2>{{ exito().titulo }}</h2>
+        <p class="lead">{{ exito().detalle }}</p>
         <figure class="visit">
           <img src="images/territorio/01-conversacion-paseo-bolivar.jpg" alt="Brigadista conversando con una vendedora en su puesto" width="1536" height="1024" loading="lazy" />
           <figcaption>Así te va a visitar · Imagen ilustrativa</figcaption>
@@ -22,7 +22,7 @@
           <li>Empiezas tu ruta de 90 días con tu Cartilla de Caja Diaria.</li>
         </ol>
         <div class="btn-row">
-          <a class="btn btn--teal" [href]="whatsapp" target="_blank" rel="noopener"><app-icon name="chat" [size]="20" /> Guardar nuestro WhatsApp</a>
+          <a class="btn btn--teal" [href]="whatsapp" target="_blank" rel="noopener" (click)="alWhatsapp()"><app-icon name="chat" [size]="20" /> Escríbenos ya por WhatsApp</a>
           <a class="btn btn--outline" routerLink="/herramientas">Mientras tanto, haz tus cuentas</a>
           <button type="button" class="btn btn--outline" (click)="nuevaInscripcion()">Anotar otro negocio</button>
         </div>
@@ -84,6 +84,7 @@
               <legend class="label">¿Cómo prefieres que te contactemos?</legend>
               <label class="choice"><input type="radio" formControlName="contacto" value="whatsapp" /><span>WhatsApp</span></label>
               <label class="choice"><input type="radio" formControlName="contacto" value="llamada" /><span>Llamada</span></label>
+              <label class="choice"><input type="radio" formControlName="contacto" value="visita" /><span>Que pasen por mi puesto</span></label>
             </fieldset>
           </div>
         </fieldset>
