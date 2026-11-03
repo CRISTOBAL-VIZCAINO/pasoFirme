@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Injector, afterNextRender, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { TrackingService } from '../../../core/tracking.service';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { PageHero } from '../../../shared/ui/page-hero/page-hero';
 import { Dimension, Nivel, PreguntaDiagnostico, Respuesta, evaluarDiagnostico } from '../calculos';
@@ -65,6 +66,8 @@ export class Autodiagnostico {
   };
 
   private readonly injector = inject(Injector);
+  private readonly tracking = inject(TrackingService);
+  private empezo = false;
 
   protected readonly indice = signal(0);
   protected readonly respuestas = signal<Record<string, Respuesta | undefined>>({});
@@ -75,6 +78,10 @@ export class Autodiagnostico {
   protected readonly resultado = computed(() => evaluarDiagnostico(this.preguntas, this.respuestas()));
 
   protected responder(valor: Respuesta): void {
+    if (!this.empezo) {
+      this.empezo = true;
+      this.tracking.registrar('tool_start', { tool: 'autodiagnostico' });
+    }
     this.respuestas.update((r) => ({ ...r, [this.actual().id]: valor }));
   }
 
@@ -83,6 +90,9 @@ export class Autodiagnostico {
       this.indice.update((i) => i + 1);
     } else {
       this.terminado.set(true);
+      // Solo la categoría del resultado, nunca las respuestas.
+      const semaforo = { firme: 'verde', 'en-camino': 'amarillo', 'en-riesgo': 'rojo' } as const;
+      this.tracking.registrar('tool_complete', { tool: 'autodiagnostico', resultado: semaforo[this.resultado().nivel] });
     }
     this.enfocarTarjeta();
   }

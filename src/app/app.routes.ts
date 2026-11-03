@@ -19,7 +19,7 @@ export const routes: Routes = [
   {
     path: 'programa',
     loadComponent: () => import('./features/programa/programa').then((m) => m.Programa),
-    title: 'El programa',
+    title: 'Cómo funciona',
     data: {
       description: 'Conoce el método P.A.S.O., la ruta de acompañamiento de 90 días y quién puede participar en Paso Firme.',
     },
@@ -89,14 +89,19 @@ export const routes: Routes = [
   {
     path: 'inscripcion',
     loadComponent: () => import('./features/inscripcion/inscripcion').then((m) => m.Inscripcion),
-    title: 'Inscribe tu negocio',
-    data: { description: 'Inscribe tu negocio en Paso Firme y recibe acompañamiento gratuito en tu propio puesto.' },
+    title: 'Quiero que me visiten',
+    data: { description: 'Déjanos tu nombre y tu celular y recibe acompañamiento gratuito en tu propio puesto.' },
   },
   {
     path: 'privacidad',
     loadComponent: () => import('./features/privacidad/privacidad').then((m) => m.Privacidad),
     title: 'Tratamiento de datos personales',
     data: { description: 'Política de tratamiento de datos personales de Paso Firme (Ley 1581 de 2012).' },
+  },
+  {
+    // Panel interno: no está enlazado ni se mide; se carga de forma diferida.
+    path: 'admin',
+    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
   {
     path: '**',

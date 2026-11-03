@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { PfTrackDirective } from '../../../core/pf-track.directive';
+import { TrackingService } from '../../../core/tracking.service';
 import { whatsappUrl } from '../../../data/site.config';
 import { Icon } from '../icon/icon';
 
 @Component({
   selector: 'app-cta-banner',
-  imports: [RouterLink, Icon],
+  imports: [RouterLink, Icon, PfTrackDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="section section--tight" aria-labelledby="cta-title">
@@ -17,11 +19,11 @@ import { Icon } from '../icon/icon';
             <p>{{ text() }}</p>
           </div>
           <div class="btn-row">
-            <a class="btn btn--primary" routerLink="/inscripcion">
-              Inscribe tu negocio
+            <a class="btn btn--primary" routerLink="/inscripcion" pfTrack="inscribete_final">
+              Quiero que me visiten
               <app-icon name="arrow-right" [size]="20" />
             </a>
-            <a class="btn btn--light" [href]="whatsapp" target="_blank" rel="noopener">
+            <a class="btn btn--light" data-hide-fab [href]="whatsapp" target="_blank" rel="noopener" (click)="alWhatsapp()">
               <app-icon name="chat" [size]="20" />
               Escríbenos por WhatsApp
             </a>
@@ -62,8 +64,14 @@ import { Icon } from '../icon/icon';
   `,
 })
 export class CtaBanner {
-  readonly title = input('¿Listo para darle paso firme a tu negocio?');
-  readonly text = input('Te visitamos en tu puesto, sin costo y sin que dejes de vender. Inscríbete en dos minutos.');
+  readonly title = input('¿Hablamos? Escríbenos hoy.');
+  readonly text = input('Sin costo. Sin letra pequeña. Tú decides hasta dónde llegamos. Te visitamos en tu puesto sin que dejes de vender.');
 
-  protected readonly whatsapp = whatsappUrl('Hola, quiero que Paso Firme visite mi negocio.');
+  private readonly tracking = inject(TrackingService);
+
+  protected alWhatsapp(): void {
+    this.tracking.registrar('whatsapp_click', { origen: 'cta_final' });
+  }
+
+  protected readonly whatsapp = whatsappUrl('Hola, quiero que me visiten en mi puesto.');
 }

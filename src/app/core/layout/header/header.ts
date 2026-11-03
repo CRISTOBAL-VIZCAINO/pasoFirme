@@ -3,13 +3,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
 
-import { NAV } from '../../../data/site.config';
+import { PfTrackDirective } from '../../pf-track.directive';
+import { NAV, NAV_ALIADOS } from '../../../data/site.config';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Logo } from '../../../shared/ui/logo/logo';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, Icon, Logo],
+  imports: [RouterLink, RouterLinkActive, Icon, Logo, PfTrackDirective],
   templateUrl: './header.html',
   styleUrl: './header.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,6 +22,7 @@ import { Logo } from '../../../shared/ui/logo/logo';
 })
 export class Header {
   protected readonly nav = NAV;
+  protected readonly aliados = NAV_ALIADOS;
   protected readonly open = signal(false);
   protected readonly scrolled = signal(false);
 

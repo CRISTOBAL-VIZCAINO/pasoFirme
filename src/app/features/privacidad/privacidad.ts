@@ -48,14 +48,21 @@ import { PageHero } from '../../shared/ui/page-hero/page-hero';
 
         <h2>4. Lo que nunca hacemos</h2>
         <p>
-          No vendemos tus datos, no los compartimos con autoridades tributarias ni con la Alcaldía, y no los entregamos a entidades financieras
-          sin tu autorización expresa.
+          No vendemos tus datos y no los compartimos sin tu autorización, salvo una orden legal de autoridad competente. Tampoco los entregamos
+          a entidades financieras sin tu autorización expresa.
         </p>
 
         <h2>5. Tus derechos</h2>
         <p>
           Puedes conocer, actualizar, rectificar y suprimir tus datos, revocar la autorización y presentar quejas ante la Superintendencia de
-          Industria y Comercio. Para ejercerlos, escríbenos a <a [href]="'mailto:' + site.correo">{{ site.correo }}</a>.
+          Industria y Comercio. Para ejercerlos, escríbenos por WhatsApp o a nuestro correo oficial (TODO: publicar el correo oficial).
+        </p>
+
+        <h2>Medición de visitas</h2>
+        <p>
+          Medimos las visitas de forma anónima y sin cookies de terceros. Guardamos un identificador aleatorio en tu navegador. Si te inscribes,
+          lo asociamos a tu inscripción para saber desde dónde llegaste. Puedes pedir que borremos tus datos.
+          <!-- TODO: revisión jurídica de este texto. -->
         </p>
 
         <h2>6. Uso de inteligencia artificial</h2>

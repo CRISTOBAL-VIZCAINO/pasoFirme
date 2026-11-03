@@ -38,6 +38,8 @@ export class PhotoCarousel {
   readonly fotos = input.required<Foto[]>();
   /** Nombre accesible del carrusel. */
   readonly label = input.required<string>();
+  /** Las imágenes generadas con IA o de apoyo se rotulan como ilustrativas. */
+  readonly ilustrativa = input(true);
 
   private readonly track = viewChild.required<ElementRef<HTMLElement>>('track');
 

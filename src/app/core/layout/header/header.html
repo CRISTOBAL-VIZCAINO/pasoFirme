@@ -1,6 +1,6 @@
 <header class="bar">
   <div class="container inner">
-    <a routerLink="/" class="brand" aria-label="Paso Firme, ir al inicio">
+    <a routerLink="/" class="brand">
       <app-logo />
     </a>
 
@@ -21,7 +21,8 @@
     </nav>
 
     <div class="actions">
-      <a routerLink="/inscripcion" class="btn btn--primary btn--sm cta">Inscríbete</a>
+      <a [routerLink]="aliados.path" class="aliados">{{ aliados.label }}</a>
+      <a routerLink="/inscripcion" class="btn btn--primary btn--sm cta" pfTrack="inscribete_header">Quiero que me visiten</a>
       <button
         type="button"
         class="menu-toggle"
@@ -53,6 +54,7 @@
         </li>
       }
     </ul>
-    <a routerLink="/inscripcion" class="btn btn--primary">Inscribe tu negocio</a>
+    <a routerLink="/inscripcion" class="btn btn--primary" pfTrack="inscribete_menu_movil">Quiero que me visiten</a>
+    <a [routerLink]="aliados.path" class="aliados-m">{{ aliados.label }}</a>
   </nav>
 </div>

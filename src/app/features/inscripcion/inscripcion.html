@@ -1,35 +1,40 @@
 <app-page-hero
-  eyebrow="Inscripción gratuita"
-  title="Inscribe tu negocio"
-  lead="Déjanos tus datos y un brigadista de Paso Firme te contactará para visitarte en tu puesto, en el horario que prefieras."
+  eyebrow="Gratis · 2 minutos"
+  title="Quiero que me visiten"
+  lead="Déjanos tu nombre y tu celular. Un brigadista te escribe para acordar la visita en tu puesto."
   [breadcrumbs]="[{ label: 'Inscripción' }]"
 />
 
 <section class="section">
   <div class="container layout">
-    @if (enviada(); as s) {
+    @if (enviada()) {
       <div class="card success" role="status" tabindex="-1">
         <span class="icon-badge icon-badge--sun big"><app-icon name="check-circle" [size]="34" /></span>
-        <h2>¡Listo! Tu negocio quedó inscrito</h2>
-        <p class="lead">Un brigadista te contactará en los próximos días para acordar la visita.</p>
-        <p class="radicado">Número de radicado: <strong>{{ s.radicado }}</strong></p>
-        <div class="note">
-          <app-icon name="info" [size]="20" />
-          <p>
-            Versión de demostración: esta inscripción se guardó únicamente en este navegador. Cuando la plataforma esté conectada, llegará
-            directamente al equipo de Paso Firme.
-          </p>
-        </div>
+        <h2>¡Listo! Te contactamos pronto por WhatsApp</h2>
+        <p class="lead">Un brigadista te escribe en los próximos días para acordar la visita.</p>
+        <figure class="visit">
+          <img src="images/territorio/01-conversacion-paseo-bolivar.jpg" alt="Brigadista conversando con una vendedora en su puesto" width="1536" height="1024" loading="lazy" />
+          <figcaption>Así te va a visitar · Imagen ilustrativa</figcaption>
+        </figure>
+        <ol class="next-steps">
+          <li>Te escribimos por el medio que elegiste.</li>
+          <li>Te visitamos en tu puesto, en horas de poco movimiento.</li>
+          <li>Empiezas tu ruta de 90 días con tu Cartilla de Caja Diaria.</li>
+        </ol>
         <div class="btn-row">
-          <a class="btn btn--teal" [href]="whatsapp" target="_blank" rel="noopener"><app-icon name="chat" [size]="20" /> Avísanos por WhatsApp</a>
-          <a class="btn btn--outline" routerLink="/herramientas">Mientras tanto, usa las herramientas</a>
-          <button type="button" class="btn btn--outline" (click)="nuevaInscripcion()">Inscribir otro negocio</button>
+          <a class="btn btn--teal" [href]="whatsapp" target="_blank" rel="noopener"><app-icon name="chat" [size]="20" /> Guardar nuestro WhatsApp</a>
+          <a class="btn btn--outline" routerLink="/herramientas">Mientras tanto, haz tus cuentas</a>
+          <button type="button" class="btn btn--outline" (click)="nuevaInscripcion()">Anotar otro negocio</button>
         </div>
       </div>
     } @else {
-      <form class="card form" [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+      <form class="card form" [formGroup]="form" (ngSubmit)="enviar()" (focusin)="alEmpezar()" novalidate>
+        <div class="hp" aria-hidden="true">
+          <label for="website">No llenes este campo</label>
+          <input id="website" type="text" tabindex="-1" autocomplete="off" formControlName="website" />
+        </div>
         <fieldset>
-          <legend><h2>1. Tus datos</h2></legend>
+          <legend><h2>Tus datos</h2></legend>
           <div class="form-grid">
             <div class="field">
               <label class="label" for="nombre">Nombre completo</label>
@@ -63,30 +68,6 @@
                 <p id="celular-err" class="error">Escribe un celular colombiano de 10 dígitos que empiece por 3.</p>
               }
             </div>
-            <fieldset class="field field--full choice-group">
-              <legend class="label">¿Cómo prefieres que te contactemos?</legend>
-              <label class="choice"><input type="radio" formControlName="contacto" value="whatsapp" /><span>WhatsApp</span></label>
-              <label class="choice"><input type="radio" formControlName="contacto" value="llamada" /><span>Llamada</span></label>
-              <label class="choice"><input type="radio" formControlName="contacto" value="visita" /><span>Que me visiten directamente</span></label>
-            </fieldset>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend><h2>2. Tu negocio</h2></legend>
-          <div class="form-grid">
-            <div class="field">
-              <label class="label" for="municipio">Municipio</label>
-              <select id="municipio" class="select" formControlName="municipio" [attr.aria-invalid]="invalido('municipio')" aria-describedby="municipio-err">
-                <option value="" disabled>Selecciona…</option>
-                @for (m of municipios; track m) {
-                  <option [value]="m">{{ m }}</option>
-                }
-              </select>
-              @if (invalido('municipio')) {
-                <p id="municipio-err" class="error">Selecciona tu municipio.</p>
-              }
-            </div>
             <div class="field">
               <label class="label" for="zona">Zona o mercado</label>
               <select id="zona" class="select" formControlName="zona" [attr.aria-invalid]="invalido('zona')" aria-describedby="zona-err">
@@ -99,17 +80,39 @@
                 <p id="zona-err" class="error">Selecciona la zona donde vendes.</p>
               }
             </div>
+            <fieldset class="field field--full choice-group">
+              <legend class="label">¿Cómo prefieres que te contactemos?</legend>
+              <label class="choice"><input type="radio" formControlName="contacto" value="whatsapp" /><span>WhatsApp</span></label>
+              <label class="choice"><input type="radio" formControlName="contacto" value="llamada" /><span>Llamada</span></label>
+            </fieldset>
+          </div>
+        </fieldset>
+
+        <details class="more-info">
+          <summary>
+            Cuéntanos más para prepararnos mejor <span class="opt">(opcional)</span>
+            <app-icon name="chevron-down" [size]="20" />
+          </summary>
+        <fieldset>
+          <legend><h3>Tu negocio</h3></legend>
+          <div class="form-grid">
+            <div class="field">
+              <label class="label" for="municipio">Municipio</label>
+              <select id="municipio" class="select" formControlName="municipio">
+                <option value="" disabled>Selecciona…</option>
+                @for (m of municipios; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
             <div class="field">
               <label class="label" for="tipo">Tipo de negocio</label>
-              <select id="tipo" class="select" formControlName="tipoNegocio" [attr.aria-invalid]="invalido('tipoNegocio')" aria-describedby="tipo-err">
+              <select id="tipo" class="select" formControlName="tipoNegocio">
                 <option value="" disabled>Selecciona…</option>
                 @for (t of tiposNegocio; track t) {
                   <option [value]="t">{{ t }}</option>
                 }
               </select>
-              @if (invalido('tipoNegocio')) {
-                <p id="tipo-err" class="error">Selecciona el tipo de negocio.</p>
-              }
             </div>
             <div class="field">
               <label class="label" for="actividad">¿Qué vendes?</label>
@@ -118,21 +121,15 @@
                 class="input"
                 placeholder="Ej.: jugos y frutas, ropa, misceláneas"
                 formControlName="actividad"
-                [attr.aria-invalid]="invalido('actividad')"
-                aria-describedby="actividad-err"
+               
+               
               />
-              @if (invalido('actividad')) {
-                <p id="actividad-err" class="error">Cuéntanos brevemente qué vendes.</p>
-              }
             </div>
-            <fieldset class="field field--full choice-group" [attr.aria-invalid]="invalido('antiguedad')">
+            <fieldset class="field field--full choice-group">
               <legend class="label">¿Cuánto tiempo llevas con tu negocio?</legend>
               <label class="choice"><input type="radio" formControlName="antiguedad" value="menos-1" /><span>Menos de 1 año</span></label>
               <label class="choice"><input type="radio" formControlName="antiguedad" value="1-3" /><span>De 1 a 3 años</span></label>
               <label class="choice"><input type="radio" formControlName="antiguedad" value="mas-3" /><span>Más de 3 años</span></label>
-              @if (invalido('antiguedad')) {
-                <p class="error field--full">Selecciona una opción.</p>
-              }
               @if (antiguedad() === 'menos-1') {
                 <div class="note note--sun field--full">
                   <app-icon name="info" [size]="20" />
@@ -144,15 +141,12 @@
         </fieldset>
 
         <fieldset>
-          <legend><h2>3. ¿En qué te podemos ayudar?</h2></legend>
+          <legend><h3>¿En qué te podemos ayudar?</h3></legend>
           <div class="checks" formGroupName="necesidades">
             @for (n of necesidadesOpciones; track n.key) {
               <label class="checkbox"><input type="checkbox" [formControlName]="n.key" /> {{ n.texto }}</label>
             }
           </div>
-          @if (invalido('necesidades')) {
-            <p class="error">Elige al menos una opción.</p>
-          }
 
           <fieldset class="choice-group horario">
             <legend class="label">¿A qué hora te queda mejor la visita?</legend>
@@ -162,13 +156,15 @@
           </fieldset>
         </fieldset>
 
+        </details>
+
         <div class="consent">
           <label class="checkbox">
             <input type="checkbox" formControlName="autorizacion" [attr.aria-invalid]="invalido('autorizacion')" />
             <span>
-              Autorizo a Paso Firme a tratar mis datos personales para contactarme y acompañar mi negocio, según la
-              <a routerLink="/privacidad" target="_blank">política de tratamiento de datos</a> (Ley 1581 de 2012). Mis datos no se compartirán
-              con entidades financieras sin mi autorización expresa.
+              Autorizo a Paso Firme a tratar mis datos para contactarme y a usar mi navegación en este sitio para mejorar el servicio, según la
+              <a routerLink="/privacidad" target="_blank">política de tratamiento de datos</a> (Ley 1581 de 2012).
+              <!-- TODO: revisión jurídica de esta redacción. -->
             </span>
           </label>
           @if (invalido('autorizacion')) {
@@ -176,11 +172,15 @@
           }
         </div>
 
+        @if (errorServidor(); as e) {
+          <p class="error" role="alert">{{ e }}</p>
+        }
+
         <button type="submit" class="btn btn--primary submit" [disabled]="enviando()">
           @if (enviando()) {
             Enviando…
           } @else {
-            Inscribir mi negocio
+            Quiero que me visiten
             <app-icon name="arrow-right" [size]="20" />
           }
         </button>
