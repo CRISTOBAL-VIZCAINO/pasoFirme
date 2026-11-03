@@ -11,12 +11,6 @@
   targetPort = 4200
   port = 8888
 
-# Las funciones no deben quedar capturadas por la regla del SPA
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
 # SPA: send every route to index.html so Angular's router handles it
 [[redirects]]
   from = "/*"
