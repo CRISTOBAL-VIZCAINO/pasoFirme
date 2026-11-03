@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { WHATSAPP_VISIBLE } from '../../core/contacto';
 import { SITE } from '../../data/site.config';
 import { PageHero } from '../../shared/ui/page-hero/page-hero';
 
@@ -55,7 +56,8 @@ import { PageHero } from '../../shared/ui/page-hero/page-hero';
         <h2>5. Tus derechos</h2>
         <p>
           Puedes conocer, actualizar, rectificar y suprimir tus datos, revocar la autorización y presentar quejas ante la Superintendencia de
-          Industria y Comercio. Para ejercerlos, escríbenos por WhatsApp o a nuestro correo oficial (TODO: publicar el correo oficial).
+          Industria y Comercio. Para ejercerlos, escríbenos por WhatsApp al {{ telefono }}.
+          <!-- TODO (equipo): publicar el correo oficial de atención de datos cuando exista y añadirlo aquí. -->
         </p>
 
         <h2>Medición de visitas</h2>
@@ -88,4 +90,5 @@ import { PageHero } from '../../shared/ui/page-hero/page-hero';
 })
 export class Privacidad {
   protected readonly site = SITE;
+  protected readonly telefono = WHATSAPP_VISIBLE;
 }

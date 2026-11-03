@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { WHATSAPP_NUMERO } from '../../core/contacto';
 import { InscripcionService } from '../../core/inscripcion.service';
 import { TrackingService } from '../../core/tracking.service';
 import { Inscripcion } from './inscripcion';
@@ -61,7 +62,7 @@ describe('Inscripción: pantalla de éxito según el canal', () => {
     await inscribir(canal);
     const enlace = [...el().querySelectorAll<HTMLAnchorElement>('.success a')].find((a) => a.textContent?.includes('Escríbenos ya por WhatsApp'))!;
     expect(enlace).toBeTruthy();
-    expect(enlace.href).toMatch(/^https:\/\/wa\.me\/573206486123\?text=.+/);
+    expect(enlace.href).toContain(`https://wa.me/${WHATSAPP_NUMERO}?text=`);
     expect(decodeURIComponent(enlace.href.split('?text=')[1])).toContain('Hola');
     enlace.addEventListener('click', (e) => e.preventDefault());
     enlace.click();
